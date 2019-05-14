@@ -19,7 +19,7 @@ Features of this version include:
 - Reduced set of measured state variables
 
 The goal of building this environment was to test different
-control engineering and reinfircement learning methods on
+control engineering and reinforcement learning methods on
 a problem that is more challenging than the simple cart-pole
 environment provided by OpenAI but still simple enough to
 understand and use to help us learn about the relative
