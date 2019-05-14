@@ -1,12 +1,12 @@
 # gym-CartPole-bt-v0
 This is a modified version of the [cart-pole OpenAI Gym environment](https://gym.openai.com/envs/CartPole-v1/) for testing
-different controllers and reinforcement learning policies.
+different controllers and reinforcement learning algorithms.
 
 This version of the classic cart-pole or [cart-and-inverted-pendulum](https://en.wikipedia.org/wiki/Inverted_pendulum#Inverted_pendulum_on_a_cart)
 control problem offers more variations on the basic OpenAI
 Gym version ('CartPole-v1').
 
-It is based on a MATLAB implementation by Steven L. Brunton
+It is based on a MATLAB implementation by [Steven L. Brunton](https://www.me.washington.edu/facultyfinder/steve-brunton)
 as part of his excellent [Control Bootcamp](https://youtu.be/qjhAAQexzLg) series of videos on
 YouTube.
 
@@ -29,14 +29,15 @@ strengths and weaknesses of control/RL approaches.
 ## Installation
 
 To install this environment, first clone or download this repository, then
-go to the `gym-CartPole-bt-v0` folder on your computer and run the command
+go to the `gym-CartPole-bt-v0` folder on your computer and run the 
+following command in your terminal:
 
 ```
 pip install -e .
 ```
 
 This will install the gym environment.  To use the new gym environment in
-Python do the following
+Python do the following:
 
 ```Python
 import gym
