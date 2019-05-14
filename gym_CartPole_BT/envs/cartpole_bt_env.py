@@ -43,6 +43,8 @@ class CartPoleBTEnv(gym.Env):
         self.force_max = 10.0  # TBC
         self.tau = 0.02   # seconds between state updates
         self.seed()
+        self.viewer = None
+        self.state = None
 
         # Angle and position at which episode fails
         self.theta_threshold_radians = 45*math.pi/360
