@@ -46,27 +46,27 @@ class CartPoleBTEnv(gym.Env):
     Observations:
         Type: Box(4)
         Num	Observation                Min           Max
-        0	Cart Position             -4.8           4.8
+        0	Cart Position             -9.6           9.6
         1	Cart Velocity             -Inf           Inf
-        2	Pole Angle                 -pi           pi
+        2	Pole Angle (radians)      -Inf           Inf
         3	Pole Angular Velocity     -Inf           Inf
 
     Actions:
         Type: Box(1)
-        Num	Action
+        Num	Action                     Min           Max
         0	Force on Cart              -10           10
 
     Reward:
-        The reward is calculated each time step and is always negative.  It is
-        sum of the squared differences between
-          (i) the cart position and the goal position
+        The reward is calculated each time step and is a negative cost.
+        The cost function is the sum of the squared differences between
+          (i) the cart x-position and the goal x-position
          (ii) the pole angle and the goal angle
 
     Starting State:
-        Each episode, the system starts in a random position.
+        Each episode, the system starts in a random state.
 
     Episode Termination:
-        Episode ends after 100 timesteps.
+        Episode ends after 200 timesteps.
 
     Solved Requirements:
         To be determined by comparison with the ideal controller.
@@ -80,7 +80,7 @@ class CartPoleBTEnv(gym.Env):
         self.masspole = 1.0
         self.length = 2.0
         self.friction = 1.0
-        self.max_force = 10.0  # TBC
+        self.max_force = 200.0  # TBC
         self.tau = 0.02   # seconds between state updates
         self.n_steps = 200
         self.time_step = 0
@@ -116,7 +116,7 @@ class CartPoleBTEnv(gym.Env):
         """
 
         return ((state[0] - self.goal_state[0])**2 +
-                (angle_normalize(state[2]) - self.goal_state[2])**2)
+                (state[2] - self.goal_state[2])**2)
 
     def step(self, u):
 
@@ -151,7 +151,7 @@ class CartPoleBTEnv(gym.Env):
         return self.state, reward, done, {}
 
     def reset(self):
-        self.state = self.np_random.uniform(low=-0.2, high=0.2, size=(4, ))
+        self.state = self.np_random.uniform(low=-0.05, high=0.05, size=(4, ))
         self.state[2] += np.pi
         self.time_step = 0
         return np.array(self.state)
