@@ -18,12 +18,12 @@ Features of this version include:
 - Measurement noise
 - Reduced set of measured state variables
 
-The goal of building this environment was to test different
-control engineering and reinforcement learning methods on
-a problem that is more challenging than the simple cart-pole
-environment provided by OpenAI but still simple enough to
-understand and use to help us learn about the relative
-strengths and weaknesses of control/RL approaches.
+The goal of building this environment was to test different control 
+engineering and reinforcement learning methods on a problem that 
+is more challenging than the simple cart-pole environment provided 
+by OpenAI but still simple enough to understand and help us learn
+about the relative strengths and weaknesses of control/RL 
+approaches.
 
 
 ## Installation
@@ -45,3 +45,42 @@ import gym_CartPole_BT
 
 env = gym.make('CartPole-BT-v0')
 ```
+
+
+## Basic usage (without graphics)
+
+```Python
+import gym
+import gym_CartPole_BT
+import numpy as np
+
+# Control vector (shape (1, ) in this case)
+u = np.zeros(1)
+
+# We will keep track of the cumulative rewards
+cum_reward = 0.0
+
+print(f"{'i':>3s}  {'u':>5s} {'reward':>6s} {'cum_reward':>10s}")
+print("-"*22)
+
+# Run one episode
+done = False
+while not done:
+
+    # Retrieve the system state
+    x, x_dot, theta, theta_dot = env.state
+
+    # Decide control action (force on cart)
+    u[0] = 0.0  # REPLACE THIS WITH YOUR CONTROLLER
+
+    # Run simulation one time-step
+    observation, reward, done, info = env.step(u)
+
+    # Process the reward
+    cum_reward += reward
+
+    # Print updates
+    print(f"{env.time_step:3d}: {u[0]:5.1f} {reward:6.2f} {cum_reward:10.1f}")
+```
+
+For demo with graphics animation see [test_run.py](test_run.py)
