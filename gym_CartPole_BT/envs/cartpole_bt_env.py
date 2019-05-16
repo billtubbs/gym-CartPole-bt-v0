@@ -87,18 +87,17 @@ class CartPoleBTEnv(gym.Env):
         self.n_steps = 200
         self.time_step = 0
         self.goal_state = np.array([0.0, 0.0, np.pi, 0.0])
-        self.kinematics_integrator = 'solver'
+        self.kinematics_integrator = 'RK45'
 
         # Maximum and minimum angle and cart position
         self.theta_threshold_radians = 180*math.pi/360
         self.x_threshold = 9.6
 
-        # Angle limit set to 2*theta_threshold_radians so failing observation is
-        # still within bounds
+        # Thresholds for observation bounds
         high = np.array([
-            self.x_threshold*2,
+            self.x_threshold,
             np.finfo(np.float32).max,
-            self.theta_threshold_radians*2,
+            self.theta_threshold_radians,
             np.finfo(np.float32).max])
 
         self.observation_space = spaces.Box(-high, high, dtype=np.float32)
@@ -142,7 +141,7 @@ class CartPoleBTEnv(gym.Env):
             # Simple state update (Euler method)
             self.state += self.tau*y_dot
 
-        elif self.kinematics_integrator == 'solver':
+        elif self.kinematics_integrator == 'RK45':
 
             # Create a partial function for use by solver
             f = partial(cartpend_dydt,
@@ -157,8 +156,8 @@ class CartPoleBTEnv(gym.Env):
 
             # Integrate using numerical solver
             tf = t + self.tau
-            sol = solve_ivp(f, [t, tf], self.state, t_eval=[tf])
-            #import pdb;pdb.set_trace()
+            sol = solve_ivp(f, t_span=[t, tf], y0=self.state,
+                            method='RK45', t_eval=[tf])
             self.state = sol.y.reshape(-1)
 
         reward = -self.cost_function(self.state, self.goal_state)
