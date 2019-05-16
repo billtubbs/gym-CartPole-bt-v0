@@ -14,13 +14,15 @@ rng = np.random.RandomState()
 # rng.seed(seed) before starting each experiment (seed is an
 # integer).
 
-def cartpend_dydt(y, m=1, M=5, L=2, g=-10, d=1, u=0, vd=0.01):
+def cartpend_dydt(t, y, m=1, M=5, L=2, g=-10, d=1, u=0, vd=0.01):
     """Simulates the non-linear dynamics of a simple cart-pendulum system.
     These non-linear ordinary differential equations (ODEs) return the
     time-derivative at the current time given the current state of the
     system.
 
     Args:
+        t (float): Time variable - not used here but included for
+            compatibility with solvers like scipy.integrate.solve_ivp.
         y (np.array): State vector. This should be an array of
             shape (4, ) containing the current state of the system.
             y[0] is the x-position of the cart, y[1] is the velocity
@@ -101,9 +103,10 @@ def run_unit_tests(show=False):
         4: [0.026066, 0.670896, -0.026480, -2.625542]
         }
 
+    t = 0.0
     for i, u in u_test_values.items():
         y = np.array(y_test_values[i])
-        dy_calculated = cartpend_dydt(y, m=m, M=M, L=L, g=g, d=d, u=u, vd=vd)
+        dy_calculated = cartpend_dydt(t, y, m=m, M=M, L=L, g=g, d=d, u=u, vd=vd)
         dy_expected = np.array(expected_results[i])
         assert np.isclose(dy_calculated, dy_expected).all(), f"Test {i} failed"
         if show:

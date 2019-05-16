@@ -25,10 +25,12 @@ strengths and weaknesses of control/RL approaches.
 """
 
 import math
+from functools import partial
 import gym
 from gym import spaces, logger
 from gym.utils import seeding
 import numpy as np
+from scipy.integrate import solve_ivp
 from gym_CartPole_BT.systems.cartpend import cartpend_dydt
 
 class CartPoleBTEnv(gym.Env):
@@ -81,13 +83,14 @@ class CartPoleBTEnv(gym.Env):
         self.length = 2.0
         self.friction = 1.0
         self.max_force = 200.0  # TBC
-        self.tau = 0.02   # seconds between state updates
+        self.tau = 0.05   # seconds between state updates
         self.n_steps = 200
         self.time_step = 0
         self.goal_state = np.array([0.0, 0.0, np.pi, 0.0])
+        self.kinematics_integrator = 'solver'
 
-        # Angle and position at which episode fails
-        self.theta_threshold_radians = 45*math.pi/360
+        # Maximum and minimum angle and cart position
+        self.theta_threshold_radians = 180*math.pi/360
         self.x_threshold = 9.6
 
         # Angle limit set to 2*theta_threshold_radians so failing observation is
@@ -111,7 +114,7 @@ class CartPoleBTEnv(gym.Env):
         return [seed]
 
     def cost_function(self, state, goal_state):
-        """Evaluates the reward based on the system state y and
+        """Evaluates the cost based on the current state y and
         the goal state.
         """
 
@@ -121,21 +124,40 @@ class CartPoleBTEnv(gym.Env):
     def step(self, u):
 
         u = np.clip(u, -self.max_force, self.max_force)[0]
+        y = self.state
+        t = self.time_step*self.tau
 
-        # Calculate time derivative
-        y_dot = cartpend_dydt(
-            y=self.state,
-            m=self.masspole,
-            M=self.masscart,
-            L=self.length,
-            g=self.gravity,
-            d=self.friction,
-            u=u,
-            vd=0.0  # No disturbances
-        )
+        if self.kinematics_integrator == 'euler':
+            # Calculate time derivative
+            y_dot = cartpend_dydt(t, y,
+                                  m=self.masspole,
+                                  M=self.masscart,
+                                  L=self.length,
+                                  g=self.gravity,
+                                  d=self.friction,
+                                  u=u,
+                                  vd=0.0  # No disturbances
+                                  )
 
-        # Update state (Euler method)
-        self.state += self.tau*y_dot
+            # Simple state update (Euler method)
+            self.state += self.tau*y_dot
+
+        elif self.kinematics_integrator == 'solver':
+
+            # Create a partial function for use by solver
+            f = partial(cartpend_dydt,
+                        m=self.masspole,
+                        M=self.masscart,
+                        L=self.length,
+                        g=self.gravity,
+                        d=self.friction,
+                        u=u,
+                        vd=0.0  # No disturbances
+            )
+
+            # Integrate using numerical solver
+            sol = solve_ivp(f, [t, t + self.tau], self.state)
+            self.state = sol.y[:, 1]
 
         reward = -self.cost_function(self.state, self.goal_state)
 
