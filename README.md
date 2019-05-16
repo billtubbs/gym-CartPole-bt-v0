@@ -2,6 +2,8 @@
 This is a modified version of the [cart-pole OpenAI Gym environment](https://gym.openai.com/envs/CartPole-v1/) for testing
 different controllers and reinforcement learning algorithms.
 
+<IMG SRC="images/screenshot.png" WIDTH=600 ALT="Screenshot">
+
 This version of the classic cart-pole or [cart-and-inverted-pendulum](https://en.wikipedia.org/wiki/Inverted_pendulum#Inverted_pendulum_on_a_cart)
 control problem offers more variations on the basic OpenAI
 Gym version ('CartPole-v1').
