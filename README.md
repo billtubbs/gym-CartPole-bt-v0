@@ -11,12 +11,12 @@ as part of his excellent [Control Bootcamp](https://youtu.be/qjhAAQexzLg) series
 YouTube.
 
 Features of this version include:
-- More challenging control objectives (e.g. to stabilize
-  the cart x-position as well as the pendulum angle)
+- More challenging control objectives such as stabilizing
+  the cart x-position as well as the pendulum angle
 - Continuously varying control actions
-- Random disturbance to the state
-- Measurement noise
-- Reduced set of measured state variables
+- Random disturbance to the state [***Not Implemented Yet***]
+- Measurement noise [***Not Implemented Yet***]
+- Less measurements of state variables [***Not Implemented Yet***]
 
 The goal of building this environment was to test different control 
 engineering and reinforcement learning methods on a problem that 
