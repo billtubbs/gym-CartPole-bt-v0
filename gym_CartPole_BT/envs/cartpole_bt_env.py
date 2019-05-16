@@ -119,7 +119,7 @@ class CartPoleBTEnv(gym.Env):
         """
 
         return ((state[0] - self.goal_state[0])**2 +
-                (state[2] - self.goal_state[2])**2)
+                (angle_normalize(state[2]) - self.goal_state[2])**2)
 
     def step(self, u):
 
@@ -156,8 +156,10 @@ class CartPoleBTEnv(gym.Env):
             )
 
             # Integrate using numerical solver
-            sol = solve_ivp(f, [t, t + self.tau], self.state)
-            self.state = sol.y[:, 1]
+            tf = t + self.tau
+            sol = solve_ivp(f, [t, tf], self.state, t_eval=[tf])
+            #import pdb;pdb.set_trace()
+            self.state = sol.y.reshape(-1)
 
         reward = -self.cost_function(self.state, self.goal_state)
 
@@ -255,5 +257,5 @@ class CartPoleBTEnv(gym.Env):
             self.viewer.close()
             self.viewer = None
 
-def angle_normalize(x):
-    return (((x + np.pi) % (2*np.pi)) - np.pi)
+def angle_normalize(theta):
+    return theta % (2*np.pi)
