@@ -54,7 +54,7 @@ class CartPoleBTEnv(gym.Env):
     Actions:
         Type: Box(1)
         Num	Action                     Min           Max
-        0	Force on Cart              -10           10
+        0	Force on Cart             -200           200
 
     Reward:
         The reward is calculated each time step and is a negative cost.
