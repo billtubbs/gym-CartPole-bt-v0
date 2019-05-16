@@ -29,7 +29,7 @@ import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
 import numpy as np
-from cartpend import cartpend_dydt
+from gym_CartPole_BT.systems.cartpend import cartpend_dydt
 
 class CartPoleBTEnv(gym.Env):
 
@@ -46,7 +46,7 @@ class CartPoleBTEnv(gym.Env):
         self.seed()
         self.viewer = None
         self.state = None
-        self.n_steps = 10
+        self.n_steps = 100
         self.goal_state = np.array([0.0, 0.0, np.pi, 0.0])
 
         # Angle and position at which episode fails
@@ -71,7 +71,7 @@ class CartPoleBTEnv(gym.Env):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def reward_function(y, goal_state):
+    def reward_function(self, y, goal_state):
 
         return (y[0] - self.goal_state[0])**2 + \
                (angle_normalize(y[2]) - self.goal_state[2])**2
@@ -97,14 +97,14 @@ class CartPoleBTEnv(gym.Env):
 
         reward = self.reward_function(self.state, self.goal_state)
 
-        if self.time_step >= n_steps:
+        if self.time_step >= self.n_steps:
             logger.warn("You are calling 'step()' even though this "
                         "environment has already returned done = True. You "
                         "should always call 'reset()' once you receive "
                         "'done = True'")
 
         self.time_step += 1
-        done = True if self.time_step >= n_steps else False
+        done = True if self.time_step >= self.n_steps else False
 
         return self.state, reward, done, {}
 
