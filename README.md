@@ -67,7 +67,7 @@ u = np.zeros(1)
 cum_reward = 0.0
 
 print(f"{'i':>3s}  {'u':>5s} {'reward':>6s} {'cum_reward':>10s}")
-print("-"*22)
+print("-"*28)
 
 # Run one episode
 done = False
