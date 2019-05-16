@@ -26,7 +26,7 @@ strengths and weaknesses of control/RL approaches.
 
 import math
 import gym
-from gym import error, spaces, utils
+from gym import spaces, logger
 from gym.utils import seeding
 import numpy as np
 from gym_CartPole_BT.systems.cartpend import cartpend_dydt
@@ -82,15 +82,13 @@ class CartPoleBTEnv(gym.Env):
         self.friction = 1.0
         self.max_force = 10.0  # TBC
         self.tau = 0.02   # seconds between state updates
-        self.seed()
-        self.viewer = None
-        self.state = None
-        self.n_steps = 100
+        self.n_steps = 200
+        self.time_step = 0
         self.goal_state = np.array([0.0, 0.0, np.pi, 0.0])
 
         # Angle and position at which episode fails
         self.theta_threshold_radians = 45*math.pi/360
-        self.x_threshold = 2.4
+        self.x_threshold = 9.6
 
         # Angle limit set to 2*theta_threshold_radians so failing observation is
         # still within bounds
@@ -104,7 +102,9 @@ class CartPoleBTEnv(gym.Env):
         self.action_space = spaces.Box(-self.max_force, self.max_force,
                                        shape=(1,), dtype=np.float32)
 
-        self.time_step = 0
+        self.seed()
+        self.viewer = None
+        self.state = None
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -151,12 +151,87 @@ class CartPoleBTEnv(gym.Env):
         return self.state, reward, done, {}
 
     def reset(self):
-        self.state = self.np_random.uniform(low=-0.05, high=0.05, size=(4, ))
+        self.state = self.np_random.uniform(low=-0.2, high=0.2, size=(4, ))
+        self.state[2] += np.pi
         self.time_step = 0
         return np.array(self.state)
 
     def render(self, mode='human', close=False):
-        raise NotImplementedError
+        screen_width = 600
+        screen_height = 400
+
+        world_width = self.x_threshold*0.5
+        scale = screen_width/world_width
+        carty = 160 # TOP OF CART
+        polewidth = 10.0
+        polelen = scale * (0.5*self.length)
+        cartwidth = 50.0
+        cartheight = 30.0
+
+        if self.viewer is None:
+
+            from gym.envs.classic_control import rendering
+            self.viewer = rendering.Viewer(screen_width, screen_height)
+            l, r, t, b = (-cartwidth/2, cartwidth/2, cartheight/2,
+                          -cartheight/2)
+            axleoffset = cartheight/4.0
+
+            # Draw cart
+            cart = rendering.FilledPolygon([(l, b), (l, t), (r, t), (r, b)])
+            self.carttrans = rendering.Transform()
+            cart.add_attr(self.carttrans)
+            self.viewer.add_geom(cart)
+            l, r, t, b = (-polewidth/2, polewidth/2, polelen - polewidth/2,
+                          -polewidth/2)
+
+            # Draw pole
+            pole = rendering.FilledPolygon([(l, b), (l, t), (r, t), (r, b)])
+            pole.set_color(.8, .6, .4)
+            self.poletrans = rendering.Transform(translation=(0, axleoffset))
+            pole.add_attr(self.poletrans)
+            pole.add_attr(self.carttrans)
+            self.viewer.add_geom(pole)
+
+            # Draw axle
+            self.axle = rendering.make_circle(polewidth/2)
+            self.axle.add_attr(self.poletrans)
+            self.axle.add_attr(self.carttrans)
+            self.axle.set_color(.5, .5, .8)
+            self.viewer.add_geom(self.axle)
+
+            # Draw track
+            self.track = rendering.Line((0, carty), (screen_width, carty))
+            self.track.set_color(0, 0, 0)
+            self.viewer.add_geom(self.track)
+
+            # Draw goal line
+            self.track = rendering.Line((screen_width/2.0, carty),
+                                        (screen_width/2.0, carty + polelen +
+                                         25))
+            self.track.set_color(0, 0, 0)
+            self.viewer.add_geom(self.track)
+
+            self._pole_geom = pole
+
+        if self.state is None: return None
+
+        # Edit the pole polygon vertex
+        pole = self._pole_geom
+        l, r, t, b = (-polewidth/2, polewidth/2, polelen - polewidth/2,
+                      -polewidth/2)
+        pole.v = [(l, b), (l, t), (r, t), (r, b)]
+
+        x = self.state
+        cartx = x[0]*scale + screen_width/2.0 # MIDDLE OF CART
+        self.carttrans.set_translation(cartx, carty)
+        self.poletrans.set_rotation(x[2] + np.pi)  # -x[2]
+
+        return self.viewer.render(return_rgb_array=(mode=='rgb_array'))
+
+    def close(self):
+        if self.viewer:
+            self.viewer.close()
+            self.viewer = None
 
 def angle_normalize(x):
     return (((x + np.pi) % (2*np.pi)) - np.pi)
