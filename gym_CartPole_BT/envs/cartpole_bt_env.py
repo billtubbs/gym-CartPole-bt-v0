@@ -134,9 +134,7 @@ class CartPoleBTEnv(gym.Env):
                                   L=self.length,
                                   g=self.gravity,
                                   d=self.friction,
-                                  u=u,
-                                  vd=0.0  # No disturbances
-                                  )
+                                  u=u)
 
             # Simple state update (Euler method)
             self.state += self.tau*y_dot
@@ -150,9 +148,7 @@ class CartPoleBTEnv(gym.Env):
                         L=self.length,
                         g=self.gravity,
                         d=self.friction,
-                        u=u,
-                        vd=0.0  # No disturbances
-            )
+                        u=u)
 
             # Integrate using numerical solver
             tf = t + self.tau

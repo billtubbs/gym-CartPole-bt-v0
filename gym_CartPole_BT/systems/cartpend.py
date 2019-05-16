@@ -7,14 +7,8 @@ his Control Bootcamp series of YouTube videos.
 import math
 import numpy as np
 
-# Initialise a dedicated random number generator
-rng = np.random.RandomState()
 
-# If you want repeatable results (i.e. not random), use
-# rng.seed(seed) before starting each experiment (seed is an
-# integer).
-
-def cartpend_dydt(t, y, m=1, M=5, L=2, g=-10, d=1, u=0, vd=0.01):
+def cartpend_dydt(t, y, m=1, M=5, L=2, g=-10, d=1, u=0):
     """Simulates the non-linear dynamics of a simple cart-pendulum system.
     These non-linear ordinary differential equations (ODEs) return the
     time-derivative at the current time given the current state of the
@@ -36,8 +30,6 @@ def cartpend_dydt(t, y, m=1, M=5, L=2, g=-10, d=1, u=0, vd=0.01):
         d (float): Damping coefficient for friction between cart and
             ground.
         u (float): Force on cart in x-direction.
-        vd (float): Variance of random disturbances applied to
-            dtheta/dt.
 
     Returns:
         dy (np.array): The time derivate of the state (dy/dt) as a
@@ -57,7 +49,7 @@ def cartpend_dydt(t, y, m=1, M=5, L=2, g=-10, d=1, u=0, vd=0.01):
     dy[0] = y[1]
     dy[1] = D*(-mL*g*Cy*Sy + L*b)
     dy[2] = y[3]
-    dy[3] = D*((m + M)*g*Sy - Cy*b) + vd*rng.randn()
+    dy[3] = D*((m + M)*g*Sy - Cy*b)
 
     return dy
 
@@ -74,7 +66,6 @@ def run_unit_tests(show=False):
     g = -10
     d = 1
     u = 0
-    vd = 0.0  # No random disturbances
 
     # Run tests
     y_test_values = {
@@ -106,7 +97,7 @@ def run_unit_tests(show=False):
     t = 0.0
     for i, u in u_test_values.items():
         y = np.array(y_test_values[i])
-        dy_calculated = cartpend_dydt(t, y, m=m, M=M, L=L, g=g, d=d, u=u, vd=vd)
+        dy_calculated = cartpend_dydt(t, y, m=m, M=M, L=L, g=g, d=d, u=u)
         dy_expected = np.array(expected_results[i])
         assert np.isclose(dy_calculated, dy_expected).all(), f"Test {i} failed"
         if show:
