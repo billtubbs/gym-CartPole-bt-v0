@@ -15,8 +15,8 @@ env.render()
 # We will keep track of the cumulative rewards
 cum_reward = 0.0
 
-print(f"{'i':>3s}  {'u':>5s} {'reward':>6s} {'cum_reward':>10s}")
-print("-"*22)
+print(f"\n{'i':>3s}  {'u':>5s} {'reward':>6s} {'cum_reward':>10s}")
+print("-"*28)
 
 # Run one episode
 done = False
