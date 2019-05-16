@@ -2,6 +2,8 @@
 This is a modified version of the [cart-pole OpenAI Gym environment](https://gym.openai.com/envs/CartPole-v1/) for testing
 different controllers and reinforcement learning algorithms.
 
+<IMG SRC="images/screenshot.png" WIDTH=600 ALT="Screenshot">
+
 This version of the classic cart-pole or [cart-and-inverted-pendulum](https://en.wikipedia.org/wiki/Inverted_pendulum#Inverted_pendulum_on_a_cart)
 control problem offers more variations on the basic OpenAI
 Gym version ('CartPole-v1').
@@ -54,6 +56,10 @@ import gym
 import gym_CartPole_BT
 import numpy as np
 
+# Create and initialize environment
+env = gym.make('CartPole-BT-v0')
+env.reset()
+
 # Control vector (shape (1, ) in this case)
 u = np.zeros(1)
 
@@ -61,7 +67,7 @@ u = np.zeros(1)
 cum_reward = 0.0
 
 print(f"{'i':>3s}  {'u':>5s} {'reward':>6s} {'cum_reward':>10s}")
-print("-"*22)
+print("-"*28)
 
 # Run one episode
 done = False
