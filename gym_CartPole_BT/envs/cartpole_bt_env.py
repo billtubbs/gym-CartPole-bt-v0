@@ -32,6 +32,45 @@ import numpy as np
 from gym_CartPole_BT.systems.cartpend import cartpend_dydt
 
 class CartPoleBTEnv(gym.Env):
+    """
+    Description:
+        A pole is attached by an un-actuated joint to a cart, which moves along
+        a track. The goal is to move the cart and the pole to a goal position
+        and angle and stabilize it.
+
+    Source:
+        This environment corresponds to the version of the cart-pendulum problem
+        described by Steven L. Brunton in his Control Bootcamp series of YouTube
+        videos.
+
+    Observations:
+        Type: Box(4)
+        Num	Observation                Min           Max
+        0	Cart Position             -4.8           4.8
+        1	Cart Velocity             -Inf           Inf
+        2	Pole Angle                 -pi           pi
+        3	Pole Angular Velocity     -Inf           Inf
+
+    Actions:
+        Type: Box(1)
+        Num	Action
+        0	Force on Cart              -10           10
+
+    Reward:
+        The reward is calculated each time step and is always negative.  It is
+        sum of the squared differences between
+          (i) the cart position and the goal position
+         (ii) the pole angle and the goal angle
+
+    Starting State:
+        Each episode, the system starts in a random position.
+
+    Episode Termination:
+        Episode ends after 100 timesteps.
+
+    Solved Requirements:
+        To be determined by comparison with the ideal controller.
+    """
 
     metadata = {'render.modes': ['human']}
 
@@ -71,10 +110,13 @@ class CartPoleBTEnv(gym.Env):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
-    def reward_function(self, y, goal_state):
+    def cost_function(self, state, goal_state):
+        """Evaluates the reward based on the system state y and
+        the goal state.
+        """
 
-        return (y[0] - self.goal_state[0])**2 + \
-               (angle_normalize(y[2]) - self.goal_state[2])**2
+        return ((state[0] - self.goal_state[0])**2 +
+                (angle_normalize(state[2]) - self.goal_state[2])**2)
 
     def step(self, u):
 
@@ -95,7 +137,7 @@ class CartPoleBTEnv(gym.Env):
         # Update state (Euler method)
         self.state += self.tau*y_dot
 
-        reward = self.reward_function(self.state, self.goal_state)
+        reward = -self.cost_function(self.state, self.goal_state)
 
         if self.time_step >= self.n_steps:
             logger.warn("You are calling 'step()' even though this "
