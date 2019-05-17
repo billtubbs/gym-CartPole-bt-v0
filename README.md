@@ -13,12 +13,14 @@ as part of his excellent [Control Bootcamp](https://youtu.be/qjhAAQexzLg) series
 YouTube.
 
 Features of this version include:
-- More challenging control objectives such as stabilizing
-  the cart x-position as well as the pendulum angle
+- More challenging control objectives such as stabilizing the 
+  cart x-position as well as the pendulum angle and moving the
+  cart-pendulum horizontally from one point to another
 - Continuously varying control actions
-- Random disturbance to the state [***Not Implemented Yet***]
+- Random initial states
+- Random disturbance to the state
 - Measurement noise [***Not Implemented Yet***]
-- Less measurements of state variables [***Not Implemented Yet***]
+- Not all state variables measured [***Not Implemented Yet***]
 
 The goal of building this environment was to test different control 
 engineering and reinforcement learning methods on a problem that 
@@ -47,6 +49,20 @@ import gym_CartPole_BT
 
 env = gym.make('CartPole-BT-v0')
 ```
+
+## Environments
+
+There are currently 6 environments that you can use.  Select the environment
+using the id in the table below in the `gym.make` function.
+
+| #  | Id                    | Description                                  |
+| -- | --------------------- | -------------------------------------------- |
+|  1 | `'CartPole-BT-v0'`    | Basic cart-pendulum system                   |
+|  2 | `'CartPole-BT-dL-v0'` | ...with small disturbances                   |
+|  3 | `'CartPole-BT-dH-v0'` | ...with large disturbances                   |
+|  4 | `'CartPole-BT-vL-v0'` | ...with small variance in initial state      |
+|  5 | `'CartPole-BT-vH-v0'` | ...with large variance in initial state      |
+|  6 | `'CartPole-BT-m2-v0'` | ...with initial state distance -2 from goal  |
 
 
 ## Basic usage (without graphics)
