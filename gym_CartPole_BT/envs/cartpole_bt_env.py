@@ -207,7 +207,7 @@ class CartPoleBTEnv(gym.Env):
 
     def reset(self):
 
-        self.state = self.initial_state
+        self.state = self.initial_state.copy()
         assert self.state.shape[0] == 4
 
         # Add random variance
