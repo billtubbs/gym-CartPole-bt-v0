@@ -3,7 +3,7 @@ import gym_CartPole_BT
 import numpy as np
 
 # Create and initialize environment
-env = gym.make('CartPole-BT-v0')
+env = gym.make('CartPole-BT-dL-v0')
 env.reset()
 
 # Control vector (shape (1, ) in this case)

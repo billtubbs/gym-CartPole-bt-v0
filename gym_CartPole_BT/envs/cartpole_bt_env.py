@@ -76,17 +76,48 @@ class CartPoleBTEnv(gym.Env):
 
     metadata = {'render.modes': ['human']}
 
-    def __init__(self):
+    def __init__(self, description="Cart-pendulum system",
+                 goal_state=np.array([0.0, 0.0, np.pi, 0.0]),
+                 disturbances=None,
+                 initial_state='goal',
+                 initial_state_variance=None,
+                 measurement_error=None,  # Not implemented yet
+                 hidden_states=None  # Not implemented yet
+                 ):
+
+        self.description = description
+
+        # Physical attributes of system
         self.gravity = -10.0
         self.masscart = 5.0
         self.masspole = 1.0
         self.length = 2.0
         self.friction = 1.0
-        self.max_force = 200.0  # TBC
+        self.max_force = 200.0
+
+        # Set initial state and goal state
+        self.goal_state = goal_state
+        if isinstance(initial_state, (list, np.ndarray)):
+            self.initial_state = np.array(initial_state)
+        elif initial_state == 'goal':
+            self.initial_state = self.goal_state.copy()
+
+        # Other features
+        self.disturbances = disturbances
+        self.initial_state_variance = initial_state_variance
+        self.measurement_error = measurement_error
+        if hidden_states is None:
+            self.output_matrix = np.eye(4)  # Not implemented yet
+        self.variance_levels = {
+            None: 0.0,
+            'low': 0.01,
+            'high': 0.2
+        }
+
+        # Details of simulation
         self.tau = 0.05   # seconds between state updates
         self.n_steps = 200
         self.time_step = 0
-        self.goal_state = np.array([0.0, 0.0, np.pi, 0.0])
         self.kinematics_integrator = 'RK45'
 
         # Maximum and minimum angle and cart position
@@ -156,6 +187,11 @@ class CartPoleBTEnv(gym.Env):
                             method='RK45', t_eval=[tf])
             self.state = sol.y.reshape(-1)
 
+        # Add disturbance only to pendulum angular velocity (theta_dot)
+        if self.disturbances is not None:
+            v = self.variance_levels[self.disturbances]
+            self.state[3] += 0.05*self.np_random.normal(scale=v)
+
         reward = -self.cost_function(self.state, self.goal_state)
 
         if self.time_step >= self.n_steps:
@@ -170,10 +206,15 @@ class CartPoleBTEnv(gym.Env):
         return self.state, reward, done, {}
 
     def reset(self):
-        self.state = self.np_random.uniform(low=-0.05, high=0.05, size=(4, ))
-        self.state[2] += np.pi
+
+        self.state = self.initial_state
+        assert self.state.shape[0] == 4
+
+        # Add random variance
+        v = self.variance_levels[self.initial_state_variance]
+        self.state += self.np_random.normal(scale=v, size=(4, ))
         self.time_step = 0
-        return np.array(self.state)
+        return self.state
 
     def render(self, mode='human', close=False):
         screen_width = 600
@@ -190,6 +231,7 @@ class CartPoleBTEnv(gym.Env):
         if self.viewer is None:
 
             from gym.envs.classic_control import rendering
+
             self.viewer = rendering.Viewer(screen_width, screen_height)
             l, r, t, b = (-cartwidth/2, cartwidth/2, cartheight/2,
                           -cartheight/2)
@@ -210,6 +252,7 @@ class CartPoleBTEnv(gym.Env):
             pole.add_attr(self.poletrans)
             pole.add_attr(self.carttrans)
             self.viewer.add_geom(pole)
+            self._pole_geom = pole
 
             # Draw axle
             self.axle = rendering.make_circle(polewidth/2)
@@ -224,13 +267,19 @@ class CartPoleBTEnv(gym.Env):
             self.viewer.add_geom(self.track)
 
             # Draw goal line
-            self.track = rendering.Line((screen_width/2.0, carty),
-                                        (screen_width/2.0, carty + polelen +
-                                         25))
-            self.track.set_color(0, 0, 0)
-            self.viewer.add_geom(self.track)
+            x = screen_width/2.0 + self.goal_state[0]*scale
+            self.goal_line = rendering.Line((x, carty),
+                                            (x, carty + polelen + 25))
+            self.goal_line.set_color(0, 0, 0)
+            self.viewer.add_geom(self.goal_line)
 
-            self._pole_geom = pole
+            # Draw initial state position
+            if self.initial_state[0] != self.goal_state[0]:
+                x = screen_width/2.0 + self.initial_state[0]*scale
+                self.init_line = rendering.Line((x, carty),
+                                                (x, carty + polelen + 25))
+                self.init_line.set_color(0, 0, 0)
+                self.viewer.add_geom(self.init_line)
 
         if self.state is None: return None
 
