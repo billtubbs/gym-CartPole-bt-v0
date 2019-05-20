@@ -3,7 +3,7 @@ import gym_CartPole_BT
 import numpy as np
 
 # Create and initialize environment
-env = gym.make('CartPole-BT-vH-v0')
+env = gym.make('CartPole-BT-dH-v0')
 env.reset()
 
 # Control vector (shape (1, ) in this case)
@@ -15,10 +15,11 @@ env.render()
 # We will keep track of the cumulative rewards
 cum_reward = 0.0
 
-print(f"{'i':>3s}  {'u':>5s} {'reward':>6s} {'cum_reward':>10s}")
+print(f"{'k':>3s}  {'u':>5s} {'reward':>6s} {'cum_reward':>10s}")
 print("-"*28)
 
 # Gain matrix for optimal control
+# u[t] = -Ky[t]
 gain = np.array([-100.00,   -197.54,   1491.28,    668.44])
 
 # Run one episode
@@ -42,6 +43,8 @@ while not done:
 
     # Print updates
     print(f"{env.time_step:3d}: {u[0]:5.1f} {reward:6.2f} {cum_reward:10.1f}")
+
+input("Press enter to continue...")
 
 # Close animation window
 env.viewer.close()
