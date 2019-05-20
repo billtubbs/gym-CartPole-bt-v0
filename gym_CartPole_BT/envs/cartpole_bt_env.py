@@ -82,7 +82,8 @@ class CartPoleBTEnv(gym.Env):
                  initial_state='goal',
                  initial_state_variance=None,
                  measurement_error=None,  # Not implemented yet
-                 hidden_states=None  # Not implemented yet
+                 hidden_states=None,  # Not implemented yet
+                 n_steps=100
                  ):
 
         self.description = description
@@ -116,7 +117,7 @@ class CartPoleBTEnv(gym.Env):
 
         # Details of simulation
         self.tau = 0.05   # seconds between state updates
-        self.n_steps = 200
+        self.n_steps = n_steps
         self.time_step = 0
         self.kinematics_integrator = 'RK45'
 
