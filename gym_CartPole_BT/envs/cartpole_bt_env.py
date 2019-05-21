@@ -48,7 +48,7 @@ class CartPoleBTEnv(gym.Env):
     Observations:
         Type: Box(4)
         Num	Observation                Min           Max
-        0	Cart Position             -9.6           9.6
+        0	Cart Position             -Inf           Inf
         1	Cart Velocity             -Inf           Inf
         2	Pole Angle (radians)      -Inf           Inf
         3	Pole Angular Velocity     -Inf           Inf
@@ -68,7 +68,7 @@ class CartPoleBTEnv(gym.Env):
         Each episode, the system starts in a random state.
 
     Episode Termination:
-        Episode ends after 200 timesteps.
+        Episode ends after 100 timesteps.
 
     Solved Requirements:
         To be determined by comparison with the ideal controller.
