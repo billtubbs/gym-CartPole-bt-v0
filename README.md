@@ -21,6 +21,7 @@ Features of this version include:
 - Random disturbance to the state
 - Measurement noise [***Not Implemented Yet***]
 - Not all state variables measured [***Not Implemented Yet***]
+- With dead time [***Not Implemented Yet***]
 
 The goal of building this environment was to test different control 
 engineering and reinforcement learning methods on a problem that 
@@ -105,4 +106,11 @@ while not done:
     print(f"{env.time_step:3d}: {u[0]:5.1f} {reward:6.2f} {cum_reward:10.1f}")
 ```
 
-For demo with graphics animation see [test_run.py](test_run.py)
+For demos with graphics animation run the following script with the `-r` option selected and your choice of environment:
+
+- `test_run.py -e 'CartPole-BT-dL-v0' -r`
+
+To run an environment with an optimal linear controller, run this script:
+
+- `test_run_lqr.py -e 'CartPole-BT-m2-dL-v0' -r`
+
