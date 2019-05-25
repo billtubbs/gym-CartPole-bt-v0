@@ -108,9 +108,9 @@ while not done:
 
 For demos with graphics animation run the following script with the `-r` option selected and your choice of environment:
 
-- `test_run.py -e 'CartPole-BT-dL-v0' -r`
+- `test_run.py -e CartPole-BT-dL-v0 -r`
 
 To run an environment with an optimal linear controller, run this script:
 
-- `test_run_lqr.py -e 'CartPole-BT-m2-dL-v0' -r`
+- `test_run_lqr.py -e CartPole-BT-m2-dL-v0 -r`
 
