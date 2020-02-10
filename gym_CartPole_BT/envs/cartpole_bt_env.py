@@ -122,7 +122,8 @@ class CartPoleBTEnv(gym.Env):
         self.kinematics_integrator = 'RK45'
 
         # Maximum and minimum angle and cart position
-        self.theta_threshold_radians = 180*math.pi/360
+        # TODO: If episode doesn't terminate limits should be inf.
+        self.theta_threshold_radians = 5*math.pi
         self.x_threshold = 9.6
 
         # Thresholds for observation bounds
