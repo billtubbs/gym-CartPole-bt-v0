@@ -77,7 +77,7 @@ class CartPoleBTEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
     def __init__(self, description="Cart-pendulum system",
-                 goal_state=np.array([0.0, 0.0, np.pi, 0.0]),
+                 goal_state=(0.0, 0.0, np.pi, 0.0),
                  disturbances=None,
                  initial_state='goal',
                  initial_state_variance=None,
@@ -97,7 +97,7 @@ class CartPoleBTEnv(gym.Env):
         self.max_force = 200.0
 
         # Set initial state and goal state
-        self.goal_state = goal_state
+        self.goal_state = np.array(goal_state)
         if isinstance(initial_state, (list, np.ndarray)):
             self.initial_state = np.array(initial_state)
         elif initial_state == 'goal':
