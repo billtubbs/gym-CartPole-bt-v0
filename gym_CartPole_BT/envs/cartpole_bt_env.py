@@ -123,7 +123,7 @@ class CartPoleBTEnv(gym.Env):
 
         # Maximum and minimum angle and cart position
         # TODO: If episode doesn't terminate limits should be inf.
-        self.theta_threshold_radians = 5*math.pi
+        self.theta_threshold_radians = np.finfo(np.float32).max
         self.x_threshold = 9.6
 
         # Thresholds for observation bounds
@@ -131,7 +131,7 @@ class CartPoleBTEnv(gym.Env):
             self.x_threshold,
             np.finfo(np.float32).max,
             self.theta_threshold_radians,
-            np.finfo(np.float32).max], 
+            np.finfo(np.float32).max],
             dtype=np.float32)
 
         self.observation_space = spaces.Box(-high, high, dtype=np.float32)
