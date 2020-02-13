@@ -97,11 +97,11 @@ class CartPoleBTEnv(gym.Env):
         self.max_force = 200.0
 
         # Set initial state and goal state
-        self.goal_state = np.array(goal_state)
+        self.goal_state = np.array(goal_state, dtype=np.float32)
         if initial_state == 'goal':
             self.initial_state = self.goal_state.copy()
         else:
-            self.initial_state = np.array(initial_state)
+            self.initial_state = np.array(initial_state, dtype=np.float32)
 
         # Other features
         self.disturbances = disturbances
@@ -131,10 +131,12 @@ class CartPoleBTEnv(gym.Env):
             self.x_threshold,
             np.finfo(np.float32).max,
             self.theta_threshold_radians,
-            np.finfo(np.float32).max])
+            np.finfo(np.float32).max], 
+            dtype=np.float32)
 
         self.observation_space = spaces.Box(-high, high, dtype=np.float32)
-        self.action_space = spaces.Box(-self.max_force, self.max_force,
+        self.action_space = spaces.Box(np.float32(-self.max_force), 
+                                       np.float32(self.max_force),
                                        shape=(1,), dtype=np.float32)
 
         self.seed()
