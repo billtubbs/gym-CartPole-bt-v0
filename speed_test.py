@@ -81,7 +81,10 @@ def run_episodes(env, policy, n_episodes=100, render=True, show=True):
 # Create and initialize environment
 if args.show: print(f"\nInitializing environment '{args.env}'...")
 env = gym.make(args.env)
-#env.kinematics_integrator = 'euler'
+env.kinematics_integrator = 'RK45'  # Default
+# For comparison with Julia script use these:
+#env.kinematics_integrator = 'LSODA'
+#env.kinematics_integrator = 'Euler'
 env.reset()
 
 # Initialize policy

@@ -159,9 +159,9 @@ class CartPoleBTEnv(gym.Env):
 
         u = np.clip(u, -self.max_force, self.max_force)[0]
         y = self.state
-        t = self.time_step*self.tau
+        t = self.time_step * self.tau
 
-        if self.kinematics_integrator == 'euler':
+        if self.kinematics_integrator == 'Euler':
             # Calculate time derivative
             y_dot = cartpend_dydt(t, y,
                                   m=self.masspole,
@@ -172,10 +172,9 @@ class CartPoleBTEnv(gym.Env):
                                   u=u)
 
             # Simple state update (Euler method)
-            self.state += self.tau*y_dot
+            self.state += self.tau * y_dot
 
-        elif self.kinematics_integrator == 'RK45':
-
+        else:
             # Create a partial function for use by solver
             f = partial(cartpend_dydt,
                         m=self.masspole,
@@ -188,13 +187,14 @@ class CartPoleBTEnv(gym.Env):
             # Integrate using numerical solver
             tf = t + self.tau
             sol = solve_ivp(f, t_span=[t, tf], y0=self.state,
-                            method='RK45', t_eval=[tf])
+                            method=self.kinematics_integrator, 
+                            t_eval=[tf])
             self.state = sol.y.reshape(-1)
 
         # Add disturbance only to pendulum angular velocity (theta_dot)
         if self.disturbances is not None:
             v = self.variance_levels[self.disturbances]
-            self.state[3] += 0.05*self.np_random.normal(scale=v)
+            self.state[3] += 0.05 * self.np_random.normal(scale=v)
 
         reward = -self.cost_function(self.state, self.goal_state)
 
@@ -224,7 +224,7 @@ class CartPoleBTEnv(gym.Env):
         screen_width = 600
         screen_height = 400
 
-        world_width = self.x_threshold*0.5
+        world_width = self.x_threshold * 0.5
         scale = screen_width/world_width
         carty = 160 # TOP OF CART
         polewidth = 10.0
@@ -271,7 +271,7 @@ class CartPoleBTEnv(gym.Env):
             self.viewer.add_geom(self.track)
 
             # Draw goal line
-            x = screen_width/2.0 + self.goal_state[0]*scale
+            x = screen_width/2.0 + self.goal_state[0] * scale
             self.goal_line = rendering.Line((x, carty),
                                             (x, carty + polelen + 25))
             self.goal_line.set_color(0, 0, 0)
@@ -279,7 +279,7 @@ class CartPoleBTEnv(gym.Env):
 
             # Draw initial state position
             if self.initial_state[0] != self.goal_state[0]:
-                x = screen_width/2.0 + self.initial_state[0]*scale
+                x = screen_width/2.0 + self.initial_state[0] * scale
                 self.init_line = rendering.Line((x, carty),
                                                 (x, carty + polelen + 25))
                 self.init_line.set_color(0, 0, 0)
