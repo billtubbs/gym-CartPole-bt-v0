@@ -70,11 +70,10 @@ def run_episode(env, policy, render=True, show=True):
     return cum_reward
 
 
-def run_episodes(env, policy, n_edisodes=100, render=True, show=True):
+def run_episodes(env, policy, n_episodes=100, render=True, show=True):
     results = []
     for i in range(n_episodes):
-        cum_reward = run_episode(env, policy, render=args.render, 
-                                show=args.verbose)
+        cum_reward = run_episode(env, policy, render=render, show=show)
         results.append(cum_reward)
     return results
 
@@ -82,6 +81,7 @@ def run_episodes(env, policy, n_edisodes=100, render=True, show=True):
 # Create and initialize environment
 if args.show: print(f"\nInitializing environment '{args.env}'...")
 env = gym.make(args.env)
+#env.kinematics_integrator = 'euler'
 env.reset()
 
 # Initialize policy
@@ -94,7 +94,8 @@ if args.show:
     print(f"\nRunning policy for {n_episodes} episodes...")
 
 t0 = time.perf_counter()
-run_episodes(env, policy, n_edisodes=n_episodes)
+run_episodes(env, policy, n_episodes=n_episodes, render=args.render, 
+             show=args.verbose)
 t1 = time.perf_counter()
 
 if args.show:
