@@ -224,11 +224,11 @@ class CartPoleBTEnv(gym.Env):
         screen_width = 600
         screen_height = 400
 
-        world_width = self.x_threshold * 0.5
-        scale = screen_width/world_width
+        world_width = self.length * 2.4
+        scale = screen_width / world_width
         carty = 160 # TOP OF CART
         polewidth = 10.0
-        polelen = scale * (0.5*self.length)
+        polelen = scale * (0.5 * self.length)
         cartwidth = 50.0
         cartheight = 30.0
 
