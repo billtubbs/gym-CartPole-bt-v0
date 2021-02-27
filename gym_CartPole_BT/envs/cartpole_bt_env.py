@@ -98,7 +98,7 @@ class CartPoleBTEnv(gym.Env):
 
         # Set initial state and goal state
         self.goal_state = np.array(goal_state, dtype=np.float32)
-        if initial_state == 'goal':
+        if isinstance(initial_state, str) and initial_state == 'goal':
             self.initial_state = self.goal_state.copy()
         else:
             self.initial_state = np.array(initial_state, dtype=np.float32)
