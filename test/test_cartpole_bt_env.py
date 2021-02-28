@@ -6,6 +6,7 @@ $ python -m unittest test/test_cartpole_bt_env.py
 
 TODO:
 - Add tests for system functions
+- Test with Euler integration option
 """
 
 import os
