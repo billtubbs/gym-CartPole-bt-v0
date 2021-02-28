@@ -19,8 +19,9 @@ Features of this version include:
 - Continuously varying control actions
 - Random initial states
 - Random disturbance to the state
+- Not all state variables measured
+- Non-stationary disturbance to the state [***Not Implemented Yet***]
 - Measurement noise [***Not Implemented Yet***]
-- Not all state variables measured [***Not Implemented Yet***]
 - With dead time [***Not Implemented Yet***]
 
 The goal of building this environment was to test different control 
@@ -56,15 +57,23 @@ env = gym.make('CartPole-BT-v0')
 There are currently 6 environments that you can use.  Select the environment
 using the id in the table below in the `gym.make` function.
 
-| #  | Id                    | Description                                  |
-| -- | --------------------- | -------------------------------------------- |
-|  1 | `'CartPole-BT-v0'`    | Basic cart-pendulum system                   |
-|  2 | `'CartPole-BT-dL-v0'` | ...with small disturbances                   |
-|  3 | `'CartPole-BT-dH-v0'` | ...with large disturbances                   |
-|  4 | `'CartPole-BT-vL-v0'` | ...with small variance in initial state      |
-|  5 | `'CartPole-BT-vH-v0'` | ...with large variance in initial state      |
-|  6 | `'CartPole-BT-m2-v0'` | ...with initial state distance -2 from goal  |
-
+| #  | Id                       | Description                                                                                  |
+| -- | ------------------------ | -------------------------------------------------------------------------------------------- |
+|  1 | `'CartPole-BT-v0'`       | Basic cart-pendulum system (in vertical up position, no random disturbances)                 |
+|  2 | `'CartPole-BT-dL-v0'`    | ...with low random disturbance                                                               |
+|  3 | `'CartPole-BT-dH-v0'`    | ...with high random disturbance                                                              |
+|  4 | `'CartPole-BT-vL-v0'`    | ...with low variance in initial state                                                        |
+|  5 | `'CartPole-BT-vH-v0'`    | ...with high variance in initial state                                                       |
+|  6 | `'CartPole-BT-dL-vL-v0'` | ...with low random disturbance and low variance in initial state                             |
+|  7 | `'CartPole-BT-dH-vH-v0'` | ...with high random disturbance and high variance in initial state                           |
+|  8 | `'CartPole-BT-m2-v0'`    | ...with initial state distance -2 from goal                                                  |
+|  9 | `'CartPole-BT-m2-dL-v0'` | ...with initial state distance -2 from goal and small random disturbance                     |
+| 10 | `'CartPole-BT-m2-dH-v0'` | ...with initial state distance -2 from goal and high random disturbance                      |
+| 11 | `'CartPole-BT-p2-v0'`    | ...with 2 of 4 states measured (cart x-position and pole angle)                              |
+| 12 | `'CartPole-BT-p2-dL-v0'` | ...with 2 of 4 states measured and small random disturbance                                  |
+| 13 | `'CartPole-BT-p2-dH-v0'` | ...with 2 of 4 states measured and high random disturbance                                   |
+| 14 | `'CartPole-BT-p2-vL-v0'` | ...with 2 of 4 states measured and low variance in initial state                             |
+| 15 | `'CartPole-BT-p2-vH-v0'` | ...with 2 of 4 states measured and high variance in initial state                            |
 
 ## Basic usage (without graphics)
 
