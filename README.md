@@ -12,15 +12,15 @@ It is based on a MATLAB implementation by [Steven L. Brunton](https://www.me.was
 as part of his excellent [Control Bootcamp](https://youtu.be/qjhAAQexzLg) series of videos on
 YouTube.
 
-Features of this version include:
+Features of this set of environments include:
 - More challenging control objectives such as stabilizing the 
   cart x-position as well as the pendulum angle and moving the
   cart-pendulum horizontally from one point to another
 - Continuously varying control actions
 - Random initial states
 - Random disturbance to the state
+- Partially-observable states
 - Measurement noise [***Not Implemented Yet***]
-- Not all state variables measured [***Not Implemented Yet***]
 - With dead time [***Not Implemented Yet***]
 
 The goal of building this environment was to test different control 
