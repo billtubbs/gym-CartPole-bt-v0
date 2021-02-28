@@ -135,10 +135,10 @@ class CartPoleBTEnv(gym.Env):
             (-inf, inf)
         ]
         low, high = [], []
-        for measured, bounds in zip(self.measured_states, self.state_bounds):
-            if measured:
-                low.append(bounds[0])
-                high.append(bounds[1])
+        for i in self.measured_states:
+            bounds = self.state_bounds[i]
+            low.append(bounds[0])
+            high.append(bounds[1])
         low = np.array(low, dtype=np.float32)
         high = np.array(high, dtype=np.float32)
         self.observation_space = spaces.Box(low, high, dtype=np.float32)
@@ -226,7 +226,6 @@ class CartPoleBTEnv(gym.Env):
 
         # Add random variance to initial state
         v = self.variance_levels[self.initial_state_variance]
-        state_shape = self.observation_space.shape
         self.internal_state += self.np_random.normal(scale=v, size=(4, ))
         self.state = self.internal_state[self.measured_states]
         self.time_step = 0
