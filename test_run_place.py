@@ -39,7 +39,7 @@ gain = np.array([-25. , -53.5, 480. , 210. ])
 done = False
 while not done:
 
-    # Retrieve the system state
+    # Retrieve the output measurements
     x, x_dot, theta, theta_dot = env.state
 
     # Linear quadratic regulator

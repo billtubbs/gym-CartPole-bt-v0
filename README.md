@@ -2,7 +2,7 @@
 This is a modified version of the [cart-pole OpenAI Gym environment](https://gym.openai.com/envs/CartPole-v1/) for testing
 different controllers and reinforcement learning algorithms.
 
-<IMG SRC="images/screenshot.png" WIDTH=600 ALT="Screenshot">
+<IMG SRC="images/screenshot1.png" WIDTH=600 ALT="Screenshot of cart-pole environment in action">
 
 This version of the classic cart-pole or [cart-and-inverted-pendulum](https://en.wikipedia.org/wiki/Inverted_pendulum#Inverted_pendulum_on_a_cart)
 control problem offers more variations on the basic OpenAI
@@ -18,17 +18,18 @@ Features of this set of environments include:
   cart-pendulum horizontally from one point to another
 - Continuously varying control actions
 - Random initial states
-- Random disturbance to the state
+- Random state disturbance 
 - Partially-observable states
+- Non-stationary disturbance to the state [***Not Implemented Yet***]
 - Measurement noise [***Not Implemented Yet***]
 - With dead time [***Not Implemented Yet***]
 
-The goal of building this environment was to test different control 
-engineering and reinforcement learning methods on a problem that 
-is more challenging than the simple cart-pole environment provided 
-by OpenAI but still simple enough to understand and help us learn
-about the relative strengths and weaknesses of control/RL 
-approaches.
+The goal of building this set of environments was to test different 
+control and reinforcement learning (RL) methods on problems that are
+more challenging than the simple cart-pole environment provided 
+by OpenAI and more like real-world control problems but still simple
+enough to understand and to demonstrate the relative strengths and 
+weaknesses of control and RL approaches.
 
 
 ## Installation
@@ -53,17 +54,52 @@ env = gym.make('CartPole-BT-v0')
 
 ## Environments
 
-There are currently 6 environments that you can use.  Select the environment
-using the id in the table below in the `gym.make` function.
+There are currently 15 variations of the basic environment that you can use.
+Select the id for a environment from the tables below and provide it as an 
+argument to the `gym.make` function.
 
-| #  | Id                    | Description                                  |
-| -- | --------------------- | -------------------------------------------- |
-|  1 | `'CartPole-BT-v0'`    | Basic cart-pendulum system                   |
-|  2 | `'CartPole-BT-dL-v0'` | ...with small disturbances                   |
-|  3 | `'CartPole-BT-dH-v0'` | ...with large disturbances                   |
-|  4 | `'CartPole-BT-vL-v0'` | ...with small variance in initial state      |
-|  5 | `'CartPole-BT-vH-v0'` | ...with large variance in initial state      |
-|  6 | `'CartPole-BT-m2-v0'` | ...with initial state distance -2 from goal  |
+### Basic cart-pendulum system
+
+This is the basic environment where the goal is, starting in or near the vertical up position, to maintain the x-position
+and the pole angle as close as possible to (0, 0).
+
+| #  | Id                       | Description                                                                                  |
+| -- | ------------------------ | -------------------------------------------------------------------------------------------- |
+|  1 | `'CartPole-BT-v0'`       | Basic cart-pendulum system (in vertical up position, no random disturbances)                 |
+|  2 | `'CartPole-BT-dL-v0'`    | ...with low random disturbance                                                               |
+|  3 | `'CartPole-BT-dH-v0'`    | ...with high random disturbance                                                              |
+|  4 | `'CartPole-BT-vL-v0'`    | ...with low variance in initial state                                                        |
+|  5 | `'CartPole-BT-vH-v0'`    | ...with high variance in initial state                                                       |
+|  6 | `'CartPole-BT-dL-vL-v0'` | ...with low random disturbance and low variance in initial state                             |
+|  7 | `'CartPole-BT-dH-vH-v0'` | ...with high random disturbance and high variance in initial state                           |
+
+### Variant 1 - partially observable state
+
+In the following variants of the above basic environment, only the cart 
+x-position and the pole angle measurement are available each timestep.
+
+| #  | Id                       | Description                                                                                  |
+| -- | ------------------------ | -------------------------------------------------------------------------------------------- |
+|  1 | `'CartPole-BT-p2-v0'`    | ...with 2 of 4 states measured (cart x-position and pole angle)                              |
+|  2 | `'CartPole-BT-p2-dL-v0'` | ...with 2 of 4 states measured and low random disturbance                                    |
+|  3 | `'CartPole-BT-p2-dH-v0'` | ...with 2 of 4 states measured and high random disturbance                                   |
+|  4 | `'CartPole-BT-p2-vL-v0'` | ...with 2 of 4 states measured and low variance in initial state                             |
+|  5 | `'CartPole-BT-p2-vH-v0'` | ...with 2 of 4 states measured and high variance in initial state                            |
+
+### Variant 2 - Initial state to the left of the goal state
+
+In the following variants of the above basic environment, the pendulum
+starts at an x-position 2 to the left of the goal state.  The goal is 
+to move the pendulum to the right as quickly as possible and stabilize
+it at the goal state (0, 0).
+
+<IMG SRC="images/screenshot2.png" WIDTH=600 ALT="Screenshot of cart-pole environment variant">
+
+| #  | Id                       | Description                                                                                  |
+| -- | ------------------------ | -------------------------------------------------------------------------------------------- |
+|  1 | `'CartPole-BT-m2-v0'`    | ...with initial state distance -2 from goal state                                            |
+|  2 | `'CartPole-BT-m2-dL-v0'` | ...with initial state distance -2 from goal and low random disturbance                       |
+|  3 | `'CartPole-BT-m2-dH-v0'` | ...with initial state distance -2 from goal and high random disturbance                      |
 
 
 ## Basic usage (without graphics)
