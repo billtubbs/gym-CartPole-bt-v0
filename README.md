@@ -81,7 +81,7 @@ x-position and the pole angle measurement are available each timestep.
 | #  | Id                       | Description                                                                                  |
 | -- | ------------------------ | -------------------------------------------------------------------------------------------- |
 |  1 | `'CartPole-BT-p2-v0'`    | ...with 2 of 4 states measured (cart x-position and pole angle)                              |
-|  2 | `'CartPole-BT-p2-dL-v0'` | ...with 2 of 4 states measured and small random disturbance                                  |
+|  2 | `'CartPole-BT-p2-dL-v0'` | ...with 2 of 4 states measured and low random disturbance                                    |
 |  3 | `'CartPole-BT-p2-dH-v0'` | ...with 2 of 4 states measured and high random disturbance                                   |
 |  4 | `'CartPole-BT-p2-vL-v0'` | ...with 2 of 4 states measured and low variance in initial state                             |
 |  5 | `'CartPole-BT-p2-vH-v0'` | ...with 2 of 4 states measured and high variance in initial state                            |
@@ -98,7 +98,7 @@ it at the goal state (0, 0).
 | #  | Id                       | Description                                                                                  |
 | -- | ------------------------ | -------------------------------------------------------------------------------------------- |
 |  1 | `'CartPole-BT-m2-v0'`    | ...with initial state distance -2 from goal state                                            |
-|  2 | `'CartPole-BT-m2-dL-v0'` | ...with initial state distance -2 from goal and small random disturbance                     |
+|  2 | `'CartPole-BT-m2-dL-v0'` | ...with initial state distance -2 from goal and low random disturbance                       |
 |  3 | `'CartPole-BT-m2-dH-v0'` | ...with initial state distance -2 from goal and high random disturbance                      |
 
 
