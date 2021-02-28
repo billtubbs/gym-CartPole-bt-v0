@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import gym
 import gym_CartPole_BT
-from control_baselines import LQR
 import argparse
 
 # Parse any arguments provided at the command-line
@@ -17,7 +16,7 @@ parser.add_argument('-v', "--verbose", help="increase output verbosity",
                     action="store_true")
 args = parser.parse_args()
 
-def run_episode(env, model, render=True, show=True):
+def run_episode(env, gain, render=True, show=True):
 
     obs = env.reset()
 
@@ -37,8 +36,8 @@ def run_episode(env, model, render=True, show=True):
     done = False
     while not done:
 
-        # Determine control input
-        u, _ = model.predict(obs)
+        # Compute control input
+        u[:] = -np.dot(gain, obs - env.goal_state)
 
         # Run simulation one time-step
         obs, reward, done, info = env.step(u)
@@ -63,10 +62,16 @@ if args.show: print(f"\nInitializing environment '{args.env}'...")
 env = gym.make(args.env)
 env.reset()
 
-model = LQR(None, env)
-
 # Use random search to find the best linear controller:
 # u[t] = -Ky[t]
+
+# Initialize gain matrix
+gain_matrix_shape = (
+    env.action_space.shape[0],
+    env.observation_space.shape[0]
+)
+gain = np.zeros(gain_matrix_shape, dtype=float)
+u = np.zeros(env.action_space.shape)  # Control vector
 
 search_size = 1000.0
 
@@ -89,9 +94,8 @@ if args.show:
     print(f"\nStarting random search for {n_iter} episodes...")
 results = []
 for i in range(n_iter):
-    gain = (np.random.random(size=(1, 4)) - 0.5)*search_size
-    model = LQR(None, env, gain)
-    cum_reward = run_episode(env, model, render=False, show=False)
+    gain = (np.random.random(size=gain_matrix_shape) - 0.5) * search_size
+    cum_reward = run_episode(env, gain, render=False, show=False)
     results.append((cum_reward, gain))
 
 top_results = pd.DataFrame(results, columns=['cum_reward', 'gain'])
@@ -111,9 +115,8 @@ if args.show:
 
 # Now search within reduced area
 for i in range(n_iter):
-    gain = np.random.normal(best_gain, std_gain)
-    model = LQR(None, env, gain)
-    cum_reward = run_episode(env, model, render=args.render, show=False)
+    gain = (np.random.random(size=gain_matrix_shape) - 0.5) * search_size
+    cum_reward = run_episode(env, gain, render=False, show=False)
     #print(f"{i}: Cum reward: {cum_reward}")
     results.append((cum_reward, gain))
 
@@ -128,10 +131,9 @@ if args.show:
 results = []
 # Do a robustness check on top results:
 for gain in top_results['gain']:
-    model = LQR(None, env, gain)
     # Average over 3 runs
     mean_reward = np.mean([
-        run_episode(env, model, render=args.render, show=False)
+        run_episode(env, gain, render=args.render, show=False)
         for _ in range(3)
     ])
     results.append(mean_reward)
@@ -146,12 +148,12 @@ if args.show:
 
     input("\nPress enter to start simulation...")
 
-model.gain = best_gain
+gain = best_gain
 
 # Run repeated simulations with animation
 if args.show:
     while True:
-        cum_reward = run_episode(env, model, render=args.render,
+        cum_reward = run_episode(env, gain, render=args.render,
                                  show=args.verbose)
         print(f"Reward: {round(cum_reward, 2)}")
         s = input("Press enter to run again, 'q' to quit: ")

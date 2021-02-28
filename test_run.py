@@ -35,8 +35,8 @@ if args.show:
 done = False
 while not done:
 
-    # Retrieve the system state
-    x, x_dot, theta, theta_dot = env.state
+    # Retrieve the output measurements
+    state = env.state
 
     # Decide control action (force on cart)
     u[0] = 0.0  # REPLACE THIS WITH YOUR CONTROLLER
