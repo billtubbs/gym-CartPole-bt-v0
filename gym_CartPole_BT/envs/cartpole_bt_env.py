@@ -31,7 +31,7 @@ from gym import spaces, logger
 from gym.utils import seeding
 import numpy as np
 from scipy.integrate import solve_ivp
-from gym_CartPole_BT.systems.cartpend import cartpend_dydt
+from gym_CartPole_BT.systems.cartpend import cartpend_dxdt
 
 class CartPoleBTEnv(gym.Env):
     """
@@ -171,7 +171,7 @@ class CartPoleBTEnv(gym.Env):
 
         if self.kinematics_integrator == 'Euler':
             # Calculate time derivative
-            x_dot = cartpend_dydt(t, x,
+            x_dot = cartpend_dxdt(t, x,
                                   m=self.masspole,
                                   M=self.masscart,
                                   L=self.length,
@@ -185,7 +185,7 @@ class CartPoleBTEnv(gym.Env):
 
         else:
             # Create a partial function for use by solver
-            f = partial(cartpend_dydt,
+            f = partial(cartpend_dxdt,
                         m=self.masspole,
                         M=self.masscart,
                         L=self.length,
