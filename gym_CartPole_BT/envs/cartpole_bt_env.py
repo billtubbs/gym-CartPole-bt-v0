@@ -71,7 +71,7 @@ class CartPoleBTEnv(gym.Env):
         Episode ends after 100 timesteps.
 
     Solved Requirements:
-        To be determined by comparison with the ideal controller.
+        To be determined by comparison with a baseline controller.
     """
 
     metadata = {'render.modes': ['human']}
@@ -82,7 +82,7 @@ class CartPoleBTEnv(gym.Env):
                  initial_state='goal',
                  initial_state_variance=None,
                  measurement_error=None,  # Not implemented yet
-                 hidden_states=None,  # Not implemented yet
+                 measured_states=(1, 1, 1, 1),
                  n_steps=100
                  ):
 
@@ -107,8 +107,7 @@ class CartPoleBTEnv(gym.Env):
         self.disturbances = disturbances
         self.initial_state_variance = initial_state_variance
         self.measurement_error = measurement_error
-        if hidden_states is None:
-            self.output_matrix = np.eye(4)  # Not implemented yet
+        self.measured_states = np.array(measured_states)
         self.variance_levels = {
             None: 0.0,
             'low': 0.01,
@@ -127,15 +126,23 @@ class CartPoleBTEnv(gym.Env):
         self.x_threshold = np.finfo(np.float32).max
 
         # Thresholds for observation bounds
-        high = np.array([
-            self.x_threshold,
-            np.finfo(np.float32).max,
-            self.theta_threshold_radians,
-            np.finfo(np.float32).max],
-            dtype=np.float32)
-
-        self.observation_space = spaces.Box(-high, high, dtype=np.float32)
-        self.action_space = spaces.Box(np.float32(-self.max_force), 
+        # Epsiode terminates if these are exceeded
+        inf = np.finfo(np.float32).max
+        self.state_bounds = [
+            (-self.x_threshold, self.x_threshold),
+            (-inf, inf),
+            (-self.theta_threshold_radians, self.theta_threshold_radians),
+            (-inf, inf)
+        ]
+        low, high = [], []
+        for measured, bounds in zip(self.measured_states, self.state_bounds):
+            if measured:
+                low.append(bounds[0])
+                high.append(bounds[1])
+        low = np.array(high, dtype=np.float32)
+        high = np.array(high, dtype=np.float32)
+        self.observation_space = spaces.Box(-low, high, dtype=np.float32)
+        self.action_space = spaces.Box(np.float32(-self.max_force),
                                        np.float32(self.max_force),
                                        shape=(1,), dtype=np.float32)
 
