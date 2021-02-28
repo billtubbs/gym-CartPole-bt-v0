@@ -70,18 +70,18 @@ class TestGymCartPoleBT(unittest.TestCase):
             self.assertEqual(env.action_space.shape, (1,))
             self.assertEqual(len(env.state_bounds), 4)
             if '-p2' in name:
-                assert_array_equal(env.measured_states, ((0, 2)))
+                assert_array_equal(env.output_matrix, ((1, 0, 0, 0), (0, 0, 1, 0)))
             else:
-                assert_array_equal(env.measured_states, ((0, 1, 2, 3)))
+                assert_array_equal(env.output_matrix, np.eye(4))
             if '-m2' in name:
                 assert_allclose(env.initial_state, [-1, 0, 3.1415927, 0])
                 assert_allclose(env.goal_state, [1, 0, 3.1415927, 0])
             else:
                 assert_allclose(env.initial_state, [0, 0, 3.1415927, 0])
                 assert_allclose(env.goal_state, [0, 0, 3.1415927, 0])
-            measured_states = env.reset()
-            assert_array_equal(measured_states, env.state)
-            self.assertEqual(measured_states.shape, env.observation_space.shape)
+            output = env.reset()
+            assert_array_equal(output, env.state)
+            self.assertEqual(output.shape, env.observation_space.shape)
             self.assertEqual(env.initial_state.shape, (4,))
 
     def test_cartpend(self):

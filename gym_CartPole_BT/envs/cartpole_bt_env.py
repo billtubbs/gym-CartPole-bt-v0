@@ -82,7 +82,7 @@ class CartPoleBTEnv(gym.Env):
                  initial_state='goal',
                  initial_state_variance=None,
                  measurement_error=None,  # Not implemented yet
-                 measured_states=((0, 1, 2, 3)),
+                 output_matrix=None,
                  n_steps=100
                  ):
 
@@ -107,7 +107,10 @@ class CartPoleBTEnv(gym.Env):
         self.disturbances = disturbances
         self.initial_state_variance = initial_state_variance
         self.measurement_error = measurement_error
-        self.measured_states = np.array(measured_states)
+        if output_matrix is None:
+            self.output_matrix = np.eye(4)
+        else:
+            self.output_matrix = np.array(output_matrix)
         self.variance_levels = {
             None: 0.0,
             'low': 0.01,
@@ -115,32 +118,28 @@ class CartPoleBTEnv(gym.Env):
         }
 
         # Details of simulation
-        self.tau = 0.05   # seconds between state updates
+        self.tau = 0.05  # seconds between state updates
         self.n_steps = n_steps
         self.time_step = 0
         self.kinematics_integrator = 'RK45'
 
-        # Maximum and minimum angle and cart position
-        # TODO: If episode doesn't terminate limits should be inf.
-        self.theta_threshold_radians = np.finfo(np.float32).max
-        self.x_threshold = np.finfo(np.float32).max
-
-        # Thresholds for observation bounds
-        # Epsiode terminates if these are exceeded
+        # Maximum and minimum thresholds for pole angle and cart position
         inf = np.finfo(np.float32).max
-        self.state_bounds = [
-            (-self.x_threshold, self.x_threshold),
-            (-inf, inf),
-            (-self.theta_threshold_radians, self.theta_threshold_radians),
-            (-inf, inf)
-        ]
-        low, high = [], []
-        for i in self.measured_states:
-            bounds = self.state_bounds[i]
-            low.append(bounds[0])
-            high.append(bounds[1])
-        low = np.array(low, dtype=np.float32)
-        high = np.array(high, dtype=np.float32)
+        self.theta_threshold_radians = inf
+        self.x_threshold = inf
+
+        # Episode terminates early if these limits are exceeded
+        self.state_bounds = np.array([
+            [-self.x_threshold, self.x_threshold],
+            [-inf, inf],
+            [-self.theta_threshold_radians, self.theta_threshold_radians],
+            [-inf, inf]
+        ])
+
+        # Translate state constraints into output bounds
+        output_bounds = self.output_matrix.dot(self.state_bounds)
+        low = output_bounds[:, 0].astype(np.float32)
+        high = output_bounds[:, 1].astype(np.float32)
         self.observation_space = spaces.Box(low, high, dtype=np.float32)
         self.action_space = spaces.Box(np.float32(-self.max_force),
                                        np.float32(self.max_force),
@@ -163,6 +162,9 @@ class CartPoleBTEnv(gym.Env):
         return ((state[0] - self.goal_state[0])**2 +
                 (angle_normalize(state[2]) - self.goal_state[2])**2)
 
+    def output(self, state):
+        return self.output_matrix.dot(self.internal_state)
+
     def step(self, u):
 
         u = np.clip(u, -self.max_force, self.max_force)[0]
@@ -181,7 +183,7 @@ class CartPoleBTEnv(gym.Env):
 
             # Simple state update (Euler method)
             self.internal_state += self.tau * x_dot
-            self.state = self.internal_state[self.measured_states]
+            self.state = self.output(self.internal_state)
 
         else:
             # Create a partial function for use by solver
@@ -199,7 +201,7 @@ class CartPoleBTEnv(gym.Env):
                             method=self.kinematics_integrator, 
                             t_eval=[tf])
             self.internal_state = sol.y.reshape(-1)
-            self.state = self.internal_state[self.measured_states]
+            self.state = self.output(self.internal_state)
 
         # Add disturbance to pendulum angular velocity (theta_dot)
         if self.disturbances is not None:
@@ -227,7 +229,7 @@ class CartPoleBTEnv(gym.Env):
         # Add random variance to initial state
         v = self.variance_levels[self.initial_state_variance]
         self.internal_state += self.np_random.normal(scale=v, size=(4, ))
-        self.state = self.internal_state[self.measured_states]
+        self.state = self.output(self.internal_state)
         self.time_step = 0
         return self.state
 

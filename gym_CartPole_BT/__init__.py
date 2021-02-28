@@ -73,7 +73,7 @@ register(
     kwargs={
         'description': "Basic cart-pendulum system with 2 of 4 states "
                        "measured (cart x-position and pole angle)",
-        'measured_states': ((0, 2))
+        'output_matrix': ((1, 0, 0, 0), (0, 0, 1, 0))
     }
 )
 
@@ -84,7 +84,7 @@ register(
         'description': "Basic cart-pendulum system with 2 of 4 states "
                        "measured (cart x-position and pole angle) and "
                        "small disturbance",
-        'measured_states': ((0, 2)),
+        'output_matrix': ((1, 0, 0, 0), (0, 0, 1, 0)),
         'disturbances': 'low'
     }
 )
@@ -96,7 +96,7 @@ register(
         'description': "Basic cart-pendulum system with 2 of 4 states "
                        "measured (cart x-position and pole angle) and "
                        "high random disturbance",
-        'measured_states': ((0, 2)),
+        'output_matrix': ((1, 0, 0, 0), (0, 0, 1, 0)),
         'disturbances': 'high'
     }
 )
@@ -108,7 +108,7 @@ register(
         'description': "Basic cart-pendulum system with 2 of 4 states "
                        "measured (cart x-position and pole angle) and "
                        "low variance in initial state",
-        'measured_states': ((0, 2)),
+        'output_matrix': ((1, 0, 0, 0), (0, 0, 1, 0)),
         'initial_state_variance': 'low'
     }
 )
@@ -120,7 +120,7 @@ register(
         'description': "Basic cart-pendulum system with 2 of 4 states "
                        "measured (cart x-position and pole angle) and "
                        "high variance in initial state",
-        'measured_states': ((0, 2)),
+        'output_matrix': ((1, 0, 0, 0), (0, 0, 1, 0)),
         'initial_state_variance': 'high'
     }
 )
