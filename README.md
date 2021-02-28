@@ -78,6 +78,8 @@ and the pole angle as close as possible to (0, 0).
 In the following variants of the above basic environment, only the cart 
 x-position and the pole angle measurement are available each timestep.
 
+| #  | Id                       | Description                                                                                  |
+| -- | ------------------------ | -------------------------------------------------------------------------------------------- |
 |  1 | `'CartPole-BT-p2-v0'`    | ...with 2 of 4 states measured (cart x-position and pole angle)                              |
 |  2 | `'CartPole-BT-p2-dL-v0'` | ...with 2 of 4 states measured and small random disturbance                                  |
 |  3 | `'CartPole-BT-p2-dH-v0'` | ...with 2 of 4 states measured and high random disturbance                                   |
@@ -93,6 +95,8 @@ it at the goal state (0, 0).
 
 <IMG SRC="images/screenshot2.png" WIDTH=600 ALT="Screenshot of cart-pole environment variant">
 
+| #  | Id                       | Description                                                                                  |
+| -- | ------------------------ | -------------------------------------------------------------------------------------------- |
 |  1 | `'CartPole-BT-m2-v0'`    | ...with initial state distance -2 from goal state                                            |
 |  2 | `'CartPole-BT-m2-dL-v0'` | ...with initial state distance -2 from goal and small random disturbance                     |
 |  3 | `'CartPole-BT-m2-dH-v0'` | ...with initial state distance -2 from goal and high random disturbance                      |
