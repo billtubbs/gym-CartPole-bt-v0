@@ -147,7 +147,6 @@ class CartPoleBTEnv(gym.Env):
 
         self.seed()
         self.viewer = None
-        self.internal_state = None
         self.state = None
 
     def seed(self, seed=None):
@@ -163,12 +162,12 @@ class CartPoleBTEnv(gym.Env):
                 (angle_normalize(state[2]) - self.goal_state[2])**2)
 
     def output(self, state):
-        return self.output_matrix.dot(self.internal_state)
+        return self.output_matrix.dot(state)
 
     def step(self, u):
 
         u = np.clip(u, -self.max_force, self.max_force)[0]
-        x = self.internal_state
+        x = self.state
         t = self.time_step * self.tau
 
         if self.kinematics_integrator == 'Euler':
@@ -182,8 +181,8 @@ class CartPoleBTEnv(gym.Env):
                                   u=u)
 
             # Simple state update (Euler method)
-            self.internal_state += self.tau * x_dot
-            self.state = self.output(self.internal_state)
+            self.state += self.tau * x_dot
+            output = self.output(self.state)
 
         else:
             # Create a partial function for use by solver
@@ -200,15 +199,15 @@ class CartPoleBTEnv(gym.Env):
             sol = solve_ivp(f, t_span=[t, tf], y0=x,
                             method=self.kinematics_integrator, 
                             t_eval=[tf])
-            self.internal_state = sol.y.reshape(-1)
-            self.state = self.output(self.internal_state)
+            self.state = sol.y.reshape(-1)
+            output = self.output(self.state)
 
         # Add disturbance to pendulum angular velocity (theta_dot)
         if self.disturbances is not None:
             v = self.variance_levels[self.disturbances]
-            self.internal_state[3] += 0.05 * self.np_random.normal(scale=v)
+            self.state[3] += 0.05 * self.np_random.normal(scale=v)
 
-        reward = -self.cost_function(self.internal_state, self.goal_state)
+        reward = -self.cost_function(self.state, self.goal_state)
 
         if self.time_step >= self.n_steps:
             logger.warn("You are calling 'step()' even though this "
@@ -219,19 +218,19 @@ class CartPoleBTEnv(gym.Env):
         self.time_step += 1
         done = True if self.time_step >= self.n_steps else False
 
-        return self.state, reward, done, {}
+        return output, reward, done, {}
 
     def reset(self):
 
-        self.internal_state = self.initial_state.copy()
-        assert self.internal_state.shape[0] == 4
+        self.state = self.initial_state.copy()
+        assert self.state.shape[0] == 4
 
         # Add random variance to initial state
         v = self.variance_levels[self.initial_state_variance]
-        self.internal_state += self.np_random.normal(scale=v, size=(4, ))
-        self.state = self.output(self.internal_state)
+        self.state += self.np_random.normal(scale=v, size=(4, ))
+        output = self.output(self.state)
         self.time_step = 0
-        return self.state
+        return output
 
     def render(self, mode='human', close=False):
         screen_width = 600
@@ -298,7 +297,7 @@ class CartPoleBTEnv(gym.Env):
                 self.init_line.set_color(0, 0, 0)
                 self.viewer.add_geom(self.init_line)
 
-        if self.internal_state is None: return None
+        if self.state is None: return None
 
         # Edit the pole polygon vertex
         pole = self._pole_geom
@@ -306,7 +305,7 @@ class CartPoleBTEnv(gym.Env):
                       -polewidth/2)
         pole.v = [(l, b), (l, t), (r, t), (r, b)]
 
-        x = self.internal_state
+        x = self.state
         cartx = x[0]*scale + screen_width/2.0 # MIDDLE OF CART
         self.carttrans.set_translation(cartx, carty)
         self.poletrans.set_rotation(x[2] + np.pi)  # -x[2]
