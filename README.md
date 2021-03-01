@@ -97,9 +97,9 @@ it at the goal state (0, 0).
 
 | #  | Id                       | Description                                                                                  |
 | -- | ------------------------ | -------------------------------------------------------------------------------------------- |
-|  1 | `'CartPole-BT-m2-v0'`    | Basic cart-pendulum system with initial state distance -2 from goal state                    |
-|  2 | `'CartPole-BT-m2-dL-v0'` | ...and low random disturbance                                                                |
-|  3 | `'CartPole-BT-m2-dH-v0'` | ...and high random disturbance                                                               |
+|  1 | `'CartPole-BT-x2-v0'`    | Basic cart-pendulum system with initial state distance -2 from goal state                    |
+|  2 | `'CartPole-BT-x2-dL-v0'` | ...and low random disturbance                                                                |
+|  3 | `'CartPole-BT-x2-dH-v0'` | ...and high random disturbance                                                               |
 
 
 ## Basic usage (without graphics)
@@ -151,5 +151,5 @@ python test_run.py -e CartPole-BT-dL-v0 -r
 To run an environment with an optimal linear controller, run this script:
 
 ```
-python test_run_lqr.py -e CartPole-BT-m2-dL-v0 -r
+python test_run_lqr.py -e CartPole-BT-x2-dL-v0 -r
 ```
