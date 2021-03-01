@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# Simple demonstration of how to set up the environment
+# and run a simulation of one episode. There is no control
+# action here, so the pendulum swings unactuated.
+
 import gym
 import gym_CartPole_BT
 import numpy as np

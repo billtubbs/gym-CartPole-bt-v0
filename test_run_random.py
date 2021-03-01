@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# A random search procedure to find a good linear control law
+
 import numpy as np
 import pandas as pd
 import gym
