@@ -36,9 +36,9 @@ class TestGymCartPoleBT(unittest.TestCase):
             'CartPole-BT-p2-dH-v0',
             'CartPole-BT-p2-vL-v0',
             'CartPole-BT-p2-vH-v0',
-            'CartPole-BT-m2-v0',
-            'CartPole-BT-m2-dL-v0',
-            'CartPole-BT-m2-dH-v0'
+            'CartPole-BT-x2-v0',
+            'CartPole-BT-x2-dL-v0',
+            'CartPole-BT-x2-dH-v0'
         ]
         self.assertEqual(len(env_names), len(set(env_names)))
 
@@ -74,7 +74,7 @@ class TestGymCartPoleBT(unittest.TestCase):
                 assert_array_equal(env.output_matrix, ((1, 0, 0, 0), (0, 0, 1, 0)))
             else:
                 assert_array_equal(env.output_matrix, np.eye(4))
-            if '-m2' in name:
+            if '-x2' in name:
                 assert_allclose(env.initial_state, [-1, 0, 3.1415927, 0])
                 assert_allclose(env.goal_state, [1, 0, 3.1415927, 0])
             else:
@@ -117,7 +117,7 @@ class TestGymCartPoleBT(unittest.TestCase):
             deterministic_envs = [
                 'CartPole-BT-v0', 
                 'CartPole-BT-p2-v0', 
-                'CartPole-BT-m2-v0'
+                'CartPole-BT-x2-v0'
             ]
             if name in deterministic_envs:
                 self.assertTrue(np.array_equal(output_1r, output_1))
