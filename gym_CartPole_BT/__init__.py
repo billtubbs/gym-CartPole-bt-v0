@@ -1,6 +1,14 @@
 from gym.envs.registration import register
 import numpy as np
 
+# Symbols used to label environment variants
+# 'p' - partially-observed states: ['p2']
+# 'x' - initial cart x-position -2 from goal: ['x2']
+# 'd' - state disturbance: ['dL', 'dH']
+# 'v' - variance in initial states: ['vL', 'vH']
+# 'm' - measurement noise: ['mL', 'mH']
+# 'v' - (at the end) version number: e.g. 'v0'
+
 register(
     id='CartPole-BT-v0',
     entry_point='gym_CartPole_BT.envs:CartPoleBTEnv',
@@ -73,7 +81,7 @@ register(
     kwargs={
         'description': "Basic cart-pendulum system with 2 of 4 states "
                        "measured (cart x-position and pole angle)",
-        'measured_states': ((0, 2))
+        'output_matrix': ((1, 0, 0, 0), (0, 0, 1, 0))
     }
 )
 
@@ -83,8 +91,8 @@ register(
     kwargs={
         'description': "Basic cart-pendulum system with 2 of 4 states "
                        "measured (cart x-position and pole angle) and "
-                       "small disturbance",
-        'measured_states': ((0, 2)),
+                       "low disturbance",
+        'output_matrix': ((1, 0, 0, 0), (0, 0, 1, 0)),
         'disturbances': 'low'
     }
 )
@@ -96,7 +104,7 @@ register(
         'description': "Basic cart-pendulum system with 2 of 4 states "
                        "measured (cart x-position and pole angle) and "
                        "high random disturbance",
-        'measured_states': ((0, 2)),
+        'output_matrix': ((1, 0, 0, 0), (0, 0, 1, 0)),
         'disturbances': 'high'
     }
 )
@@ -108,7 +116,7 @@ register(
         'description': "Basic cart-pendulum system with 2 of 4 states "
                        "measured (cart x-position and pole angle) and "
                        "low variance in initial state",
-        'measured_states': ((0, 2)),
+        'output_matrix': ((1, 0, 0, 0), (0, 0, 1, 0)),
         'initial_state_variance': 'low'
     }
 )
@@ -120,13 +128,13 @@ register(
         'description': "Basic cart-pendulum system with 2 of 4 states "
                        "measured (cart x-position and pole angle) and "
                        "high variance in initial state",
-        'measured_states': ((0, 2)),
+        'output_matrix': ((1, 0, 0, 0), (0, 0, 1, 0)),
         'initial_state_variance': 'high'
     }
 )
 
 register(
-    id='CartPole-BT-m2-v0',
+    id='CartPole-BT-x2-v0',
     entry_point='gym_CartPole_BT.envs:CartPoleBTEnv',
     kwargs={
         'description': "Basic cart-pendulum system with initial state "
@@ -137,11 +145,11 @@ register(
 )
 
 register(
-    id='CartPole-BT-m2-dL-v0',
+    id='CartPole-BT-x2-dL-v0',
     entry_point='gym_CartPole_BT.envs:CartPoleBTEnv',
     kwargs={
         'description': "Basic cart-pendulum system with initial state "
-                       "distance -2 from goal and small random disturbance",
+                       "distance -2 from goal and low random disturbance",
         'initial_state': np.array([-1., 0., np.pi, 0.]),
         'goal_state': np.array([1., 0., np.pi, 0.]),
         'disturbances': 'low'
@@ -149,7 +157,7 @@ register(
 )
 
 register(
-    id='CartPole-BT-m2-dH-v0',
+    id='CartPole-BT-x2-dH-v0',
     entry_point='gym_CartPole_BT.envs:CartPoleBTEnv',
     kwargs={
         'description': "Basic cart-pendulum system with initial state "

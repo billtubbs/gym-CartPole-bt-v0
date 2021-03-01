@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# A random search procedure to find a good linear control law
+
 import numpy as np
 import pandas as pd
 import gym
@@ -31,6 +34,9 @@ def run_episode(env, gain, render=True, show=True):
 
     # Keep track of the cumulative rewards
     cum_reward = 0.0
+
+    # Control vector
+    u = np.zeros(env.action_space.shape)
 
     # Run one episode
     done = False
@@ -71,7 +77,6 @@ gain_matrix_shape = (
     env.observation_space.shape[0]
 )
 gain = np.zeros(gain_matrix_shape, dtype=float)
-u = np.zeros(env.action_space.shape)  # Control vector
 
 search_size = 1000.0
 

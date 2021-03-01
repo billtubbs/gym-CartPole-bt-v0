@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# Demonstration of a linear controller using full
+# state feedback.  See file control_place.py for 
+# how the gain matrix was calculated.
+
 import gym
 import gym_CartPole_BT
 import numpy as np
@@ -39,7 +44,7 @@ gain = np.array([-25. , -53.5, 480. , 210. ])
 done = False
 while not done:
 
-    # Retrieve the output measurements
+    # Access the full state
     x, x_dot, theta, theta_dot = env.state
 
     # Linear quadratic regulator

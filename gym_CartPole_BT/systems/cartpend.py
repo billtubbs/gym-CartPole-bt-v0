@@ -8,16 +8,15 @@ import math
 import numpy as np
 
 
-def cartpend_dydt(t, y, m=1, M=5, L=2, g=-10, d=1, u=0):
+def cartpend_dxdt(t, x, m=1, M=5, L=2, g=-10, d=1, u=0):
     """Simulates the non-linear dynamics of a simple cart-pendulum system.
     These non-linear ordinary differential equations (ODEs) return the
-    time-derivative at the current time given the current state of the
-    system.
+    time-derivative at time t given the current state of the system.
 
     Args:
         t (float): Time variable - not used here but included for
             compatibility with solvers like scipy.integrate.solve_ivp.
-        y (np.array): State vector. This should be an array of
+        x (np.array): State vector. This should be an array of
             shape (4, ) containing the current state of the system.
             y[0] is the x-position of the cart, y[1] is the velocity
             of the cart (dx/dt), y[2] is the angle of the pendulum
@@ -32,26 +31,27 @@ def cartpend_dydt(t, y, m=1, M=5, L=2, g=-10, d=1, u=0):
         u (float): Force on cart in x-direction.
 
     Returns:
-        dy (np.array): The time derivate of the state (dy/dt) as a
-            shape (4, ) array.
+        dx (np.array): The time derivate of the state (dx/dt) as an
+            array of shape (4,).
     """
 
     # Temporary variables
-    Sy = math.sin(y[2])
-    Cy = math.cos(y[2])
-    mL = m*L
-    D = 1/(L*(M + m*(1 - Cy**2)))
-    b = mL*y[3]**2*Sy - d*y[1] + u
-    dy = np.zeros(4)
+    sin_x = math.sin(x[2])
+    cos_x = math.cos(x[2])
+    mL = m * L
+    D = 1 / (L * (M + m * (1 - cos_x**2)))
+    b = mL * x[3]**2 * sin_x - d * x[1] + u
+    dx = np.zeros(4)
 
     # Non-linear ordinary differential equations describing
     # simple cart-pendulum system dynamics
-    dy[0] = y[1]
-    dy[1] = D*(-mL*g*Cy*Sy + L*b)
-    dy[2] = y[3]
-    dy[3] = D*((m + M)*g*Sy - Cy*b)
+    dx[0] = x[1]
+    dx[1] = D * (-mL * g * cos_x * sin_x + L * b)
+    dx[2] = x[3]
+    dx[3] = D * ((m + M) * g * sin_x - cos_x * b)
 
-    return dy
+    return dx
+
 
 def cartpend_ss(m=1, M=5, L=2, g=-10, d=1, s=1):
     """Calculates the linearized approximation of the cart-pendulum
@@ -96,80 +96,5 @@ def cartpend_ss(m=1, M=5, L=2, g=-10, d=1, s=1):
 
     return A, B
 
-def run_unit_tests(show=False):
-    """Runs a few unit tests to check that cartpend_dydt function
-    calculations are accurate.
-    """
 
-    # Fixed parameter values
-    m = 1
-    M = 5
-    L = 2
-    g = -10
-    d = 1
-    u = 0
-
-    # Run tests
-    y_test_values = {
-        0: [0, 0, 0, 0],  # Pendulum down position
-        1: [0, 0, np.pi, 0],  # Pendulum up position
-        2: [0, 0, 0, 0],
-        3: [0, 0, np.pi, 0],
-        4: [2.260914, 0.026066, 0.484470, -0.026480]
-    }
-
-    test_values = {
-        0: 0.,
-        1: 0.,
-        2: 1.,
-        3: 1.,
-        4: -0.59601
-    }
-
-    # dy values below calculated with MATLAB script from
-    # Steven L. Brunton's Control Bootcamp videos
-    expected_results = {
-        0: [0., 0., 0., 0.],
-        1: [0., -2.44929360e-16, 0., -7.34788079e-16],
-        2: [0., 0.2, 0., -0.1],
-        3: [0., 0.2, 0. ,0.1],
-        4: [0.026066, 0.670896, -0.026480, -2.625542]
-        }
-
-    t = 0.0
-    for i, u in test_values.items():
-        y = np.array(y_test_values[i])
-        dy_calculated = cartpend_dydt(t, y, m=m, M=M, L=L, g=g, d=d, u=u)
-        dy_expected = np.array(expected_results[i])
-        assert np.isclose(dy_calculated, dy_expected).all(), f"Test {i} failed"
-        if show:
-            print(f"Test {i} success")
-
-    # K values below calculated with MATLAB script from
-    # Steven L. Brunton's Control Bootcamp videos
-    test_values = {
-        5: 1,  # Pendulum up position
-        6: -1  # Pendulum down position
-    }
-    expected_results = {
-        5: (np.array([[0.0,   1.0,   0.0,   0.0],
-                      [0.0,  -0.2,   2.0,   0.0],
-                      [0.0,   0.0,   0.0,   1.0],
-                      [0.0,  -0.1,   6.0,   0.0]]),
-            np.array([[ 0.0], [ 0.2], [ 0.0], [ 0.1]])),
-        6: (np.array([[0.0,   1.0,   0.0,   0.0],
-                      [0.0,  -0.2,   2.0,   0.0],
-                      [0.0,   0.0,   0.0,   1.0],
-                      [0.0,   0.1,  -6.0,   0.0]]),
-            np.array([[ 0.0], [ 0.2], [ 0.0], [-0.1]]))
-    }
-    for i, s in test_values.items():
-        A_calculated, B_calculated = cartpend_ss(m=m, M=M, L=L, g=g, d=d, s=s)
-        A_expected, B_expected = expected_results[i]
-        assert np.isclose(A_calculated, A_expected).all(), f"Test {i} failed"
-        assert np.isclose(B_calculated, B_expected).all(), f"Test {i} failed"
-        if show:
-            print(f"Test {i} success")
-
-# For now, let's run unit-tests every time this module is imported
-run_unit_tests()
+# See unit-tests in test/test_cartpole_bt_env.py
