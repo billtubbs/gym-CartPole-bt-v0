@@ -91,7 +91,7 @@ x-position and the pole angle measurement are available each timestep.
 In the following variants of the above basic environment, the pendulum
 starts at an x-position 2 to the left of the goal state.  The goal is 
 to move the pendulum to the right as quickly as possible and stabilize
-it at the goal state (0, 0).
+it at the goal state (1, 0).
 
 <IMG SRC="images/screenshot2.png" WIDTH=600 ALT="Screenshot of cart-pole environment variant">
 
