@@ -65,7 +65,8 @@ while not done:
         print(f"{env.time_step:3d}: {u[0]:5.1f} {reward:6.2f} "
               f"{cum_reward:10.1f}")
 
-input("Press enter to continue...")
+if args.render:
+    input("Press enter to close animation window")
 
 # Close animation window
 env.close()

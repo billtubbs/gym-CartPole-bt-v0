@@ -76,17 +76,16 @@ class CartPoleBTEnv(gym.Env):
 
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, description="Cart-pendulum system",
-                 goal_state=(0.0, 0.0, np.pi, 0.0),
-                 disturbances=None,
-                 initial_state='goal',
-                 initial_state_variance=None,
-                 measurement_error=None,  # Not implemented yet
-                 output_matrix=None,
-                 n_steps=100
-                 ):
+    def __init__(self, env_config):
 
-        self.description = description
+        self.description = env_config.get('description', "Cart-pendulum system")
+        goal_state = env_config.get('goal_state', (0.0, 0.0, np.pi, 0.0))
+        disturbances = env_config.get('disturbances', None)
+        initial_state = env_config.get('initial_state', 'goal')
+        initial_state_variance = env_config.get('initial_state_variance', None)
+        measurement_error = env_config.get('measurement_error', None)  # Not implemented yet
+        output_matrix = env_config.get('output_matrix', None)
+        n_steps = env_config.get('n_steps', 100)
 
         # Physical attributes of system
         self.gravity = -10.0
@@ -108,9 +107,9 @@ class CartPoleBTEnv(gym.Env):
         self.initial_state_variance = initial_state_variance
         self.measurement_error = measurement_error
         if output_matrix is None:
-            self.output_matrix = np.eye(4)
+            self.output_matrix = np.eye(4).astype(np.float32)
         else:
-            self.output_matrix = np.array(output_matrix)
+            self.output_matrix = np.array(output_matrix).astype(np.float32)
         self.variance_levels = {
             None: 0.0,
             'low': 0.01,
@@ -166,7 +165,7 @@ class CartPoleBTEnv(gym.Env):
 
     def step(self, u):
 
-        u = np.clip(u, -self.max_force, self.max_force)[0]
+        u = np.clip(u, -self.max_force, self.max_force)[0].astype('float32')
         x = self.state
         t = self.time_step * self.tau
 
@@ -181,7 +180,7 @@ class CartPoleBTEnv(gym.Env):
                                   u=u)
 
             # Simple state update (Euler method)
-            self.state += self.tau * x_dot
+            self.state += self.tau * x_dot.astype('float32')
             output = self.output(self.state)
 
         else:
@@ -199,7 +198,7 @@ class CartPoleBTEnv(gym.Env):
             sol = solve_ivp(f, t_span=[t, tf], y0=x,
                             method=self.kinematics_integrator, 
                             t_eval=[tf])
-            self.state = sol.y.reshape(-1)
+            self.state = sol.y.reshape(-1).astype('float32')
             output = self.output(self.state)
 
         # Add disturbance to pendulum angular velocity (theta_dot)
@@ -227,7 +226,7 @@ class CartPoleBTEnv(gym.Env):
 
         # Add random variance to initial state
         v = self.variance_levels[self.initial_state_variance]
-        self.state += self.np_random.normal(scale=v, size=(4, ))
+        self.state += self.np_random.normal(scale=v, size=(4, )).astype('float32')
         output = self.output(self.state)
         self.time_step = 0
         return output

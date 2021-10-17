@@ -74,15 +74,20 @@ class TestGymCartPoleBT(unittest.TestCase):
                 assert_array_equal(env.output_matrix, ((1, 0, 0, 0), (0, 0, 1, 0)))
             else:
                 assert_array_equal(env.output_matrix, np.eye(4))
+            self.assertEqual(env.output_matrix.dtype, np.dtype('float32'))
             if '-x2' in name:
                 assert_allclose(env.initial_state, [-1, 0, 3.1415927, 0])
                 assert_allclose(env.goal_state, [1, 0, 3.1415927, 0])
             else:
                 assert_allclose(env.initial_state, [0, 0, 3.1415927, 0])
                 assert_allclose(env.goal_state, [0, 0, 3.1415927, 0])
+            self.assertEqual(env.initial_state.dtype, np.dtype('float32'))
+            self.assertEqual(env.goal_state.dtype, np.dtype('float32'))
             initial_output = env.reset()
-            self.assertEqual(env.state.shape, (4,))
+            self.assertEqual(initial_output.dtype, np.dtype('float32'))
             self.assertEqual(initial_output.shape, env.observation_space.shape)
+            self.assertEqual(env.state.shape, (4,))
+            self.assertEqual(env.state.dtype, np.dtype('float32'))
             if '-vL' in name or '-vH' in name:
                 self.assertFalse(np.array_equal(initial_output, env.output(env.initial_state)))
             else:
@@ -91,6 +96,7 @@ class TestGymCartPoleBT(unittest.TestCase):
             # Simulate one time step
             u = np.array([1.0])
             output_1, reward, done, info = env.step(u)
+            self.assertEqual(output_1.dtype, np.dtype('float32'))
             self.assertFalse(done)
             if '-p2' in name:
                 self.assertEqual(output_1.shape, (2,))
@@ -112,7 +118,7 @@ class TestGymCartPoleBT(unittest.TestCase):
                 self.assertTrue(np.array_equal(output_3, env.output(env.initial_state)))
             u = np.array([1.0])
             output_1r, reward, done, info = env.step(u)
-
+            
             # Check deterministic environments
             deterministic_envs = [
                 'CartPole-BT-v0', 
