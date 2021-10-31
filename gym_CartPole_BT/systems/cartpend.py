@@ -76,8 +76,8 @@ def cartpend_ss(m=1, M=5, L=2, g=-10, d=1, s=1):
         s (int): 1 for pendulum up position or -1 for down.
 
     Returns:
-        dy (np.array): The time derivate of the state (dy/dt) as a
-            shape (4, ) array.
+        A, B (np.arrays): The A, B matrices of the state-space model
+            of the linearized system.
     """
 
     A = np.array([
