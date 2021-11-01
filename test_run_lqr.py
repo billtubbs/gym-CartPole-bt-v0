@@ -20,7 +20,10 @@ args = parser.parse_args()
 # Create and initialize environment
 if args.show: print(f"\nInitializing environment '{args.env}'...")
 env = gym.make(args.env)
-env.reset()
+observation = env.reset()
+
+# Get target state
+xp = env.goal_state.reshape(4, 1)
 
 # Control vector (shape (1, ) in this case)
 u = np.zeros(1)
@@ -44,7 +47,10 @@ done = False
 while not done:
 
     # Access the full state
-    x, x_dot, theta, theta_dot = env.state
+    #x, x_dot, theta, theta_dot = env.state
+
+    # Output measurement
+    ym = observation.reshape(4, 1) - xp
 
     # Linear quadratic regulator
     # u[t] = -Ky[t]
