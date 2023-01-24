@@ -35,16 +35,46 @@ The goal of building this set of environments was to test different control
 
 ## Installation
 
-To install this environment, first clone or download this repository, then
-go to the `gym-CartPole-bt-v0` folder on your computer and run the 
-following command in your terminal:
+To install this environment, you need the [OpenAI gym](https://github.com/openai/gym)
+package and the [pyglet](https://pypi.org/project/pyglet/) package for 
+the animations:
+```
+pip install gym pyglet
+```
+
+Then clone or download this repository, and go to the `gym-CartPole-bt-v0`
+folder in the terminal on your computer and run the following command:
 
 ```
 pip install -e .
 ```
 
-This will install the gym environment.  To use the new gym environment in
-Python do the following:
+This will install the gym environment.  
+
+*UPDATE (2023-01-23)*: I noticed today that I get the following error
+when building this environment:
+
+```lang-none
+ImportError: cannot import name 'rendering' from 'gym.envs.classic_control'
+```
+
+I'm not really sure what this is, but based on [this bug report](https://github.com/openai/gym/issues/2779)
+on their github site, it sounds like the only solution at the moment is 
+to downgrade to an older version of gym and [also downgrade pyglet](https://stackoverflow.com/questions/74314778/nameerror-name-glpushmatrix-is-not-defined):
+```
+pip install gym==0.21.0 pyglet==1.5.27
+```
+Sorry about that. If anyone knows a solution to this problem please let me know.
+
+Finally, to check everything is working you can run this test script:
+```
+python test_run.py -r
+```
+The option `-r` will make it render the cart-pole animation.
+
+## Basic Usage
+
+To use the new gym environment in Python do the following:
 
 ```Python
 import gym
