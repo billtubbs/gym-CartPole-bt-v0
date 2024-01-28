@@ -35,42 +35,36 @@ The goal of building this set of environments was to test different control
 
 ## Installation
 
-To install this environment, you need the [OpenAI gym](https://github.com/openai/gym)
-package and the [pyglet](https://pypi.org/project/pyglet/) package for 
-the animations:
-```
-pip install gym pyglet
-```
+OpenAI have officially stopped supporting old environments like this one
+and development has moved to [Gymnasium](https://github.com/Farama-Foundation/Gymnasium), which is a 
+replacement for Gym. However, this environment still runs fine (I 
+tested it on 2024-01-28), ***as long as you install the old versions of gym (0.21.0) 
+and pyglet (1.5.27)***, as specified in the [requirements.txt](requirements.txt) file.
 
-Then clone or download this repository, and go to the `gym-CartPole-bt-v0`
-folder in the terminal on your computer and run the following command:
+It also requires pip version 21.0 and setuptools version 65.5.0 as explained [here](https://stackoverflow.com/a/77205046/1609514).
 
+Since these are quite old versions, you should probably create a virtual environment
+before starting the installation.
+
+Then clone or download this repository, go to the `gym-CartPole-bt-v0`
+directory in the terminal on your computer and run the following command:
 ```
 pip install -e .
 ```
+This should install all the correct versions and the gym environment.  
 
-This will install the gym environment.  
-
-*UPDATE (2023-01-23)*: I noticed today that I get the following error
-when building this environment:
-
+If you get the following error:
 ```lang-none
 ImportError: cannot import name 'rendering' from 'gym.envs.classic_control'
 ```
-
-I'm not really sure what this is, but based on [this bug report](https://github.com/openai/gym/issues/2779)
-on their github site, it sounds like the only solution at the moment is 
-to downgrade to an older version of gym and [also downgrade pyglet](https://stackoverflow.com/questions/74314778/nameerror-name-glpushmatrix-is-not-defined):
-```
-pip install gym==0.21.0 pyglet==1.5.27
-```
-Sorry about that. If anyone knows a solution to this problem please let me know.
+then it means you didn't install the old version of gym. See [this bug report](https://github.com/openai/gym/issues/2779)
+on their github site.
 
 Finally, to check everything is working you can run this test script:
 ```
 python test_run.py -r
 ```
-The option `-r` will make it render the cart-pole animation.
+The option `-r` will make it render the cart-pole animation, or use `-s` instead to print only text output.
 
 ## Basic Usage
 
