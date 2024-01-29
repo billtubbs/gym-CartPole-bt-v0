@@ -33,6 +33,16 @@ import numpy as np
 from scipy.integrate import solve_ivp
 from gym_CartPole_BT.systems.cartpend import cartpend_dxdt
 
+
+class Disturbance():
+
+    def __init__(self, noise_magnitude, c=None, d=None):
+        if c is None:
+            c = [1]
+        if d is None:
+            d = [1]
+        
+
 class CartPoleBTEnv(gym.Env):
     """
     Description:
@@ -161,6 +171,9 @@ class CartPoleBTEnv(gym.Env):
                 (angle_normalize(state[2]) - self.goal_state[2])**2)
 
     def output(self, state):
+        if self.measurement_error:
+            if self.measurement_error[0] == 'noise':
+                v = self.measurement_error[1]
         return self.output_matrix.dot(state)
 
     def step(self, u):

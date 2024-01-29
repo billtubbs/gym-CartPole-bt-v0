@@ -37,7 +37,7 @@ The goal of building this set of environments was to test different control
 
 OpenAI have officially stopped supporting old environments like this one
 and development has moved to [Gymnasium](https://github.com/Farama-Foundation/Gymnasium), which is a 
-replacement for Gym. However, this environment still runs fine (I 
+replacement for [Gym](https://github.com/openai/gym). However, this environment still runs fine (I 
 tested it on 2024-01-28), ***as long as you install the old versions of gym (0.21.0) 
 and pyglet (1.5.27)***, as specified in the [requirements.txt](requirements.txt) file.
 

@@ -1,17 +1,22 @@
 """
 Functions to simulate the dynamics of a simple cart-pendulum system.
-Copied from MATLAB script provided by Steven L. Brunton as part of his
+Based on the MATLAB script provided by Steven L. Brunton as part of his
 Control Bootcamp series of YouTube videos.
 """
 
-import math
 import numpy as np
 
 
 def cartpend_dxdt(t, x, m=1, M=5, L=2, g=-10, d=1, u=0):
-    """Simulates the non-linear dynamics of a simple cart-pendulum system.
-    These non-linear ordinary differential equations (ODEs) return the
-    time-derivative at time t given the current state of the system.
+    """Simulates the dynamics of a simple cart-pendulum system.
+    
+    Returns the right-hand side of the following non-linear ordinary 
+    differential equation (ODE):
+    
+    dx/dt(t) = f(x(t))
+
+    which defines the time-derivative of the state variables dx/dt(t) at 
+    time t given the current state of the system, x(t).
 
     Args:
         t (float): Time variable - not used here but included for
@@ -31,53 +36,54 @@ def cartpend_dxdt(t, x, m=1, M=5, L=2, g=-10, d=1, u=0):
         u (float): Force on cart in x-direction.
 
     Returns:
-        dx (np.array): The time derivate of the state (dx/dt) as an
+        dxdt (np.array): The time derivate of the state (dx/dt) as an
             array of shape (4,).
     """
 
     # Temporary variables
-    sin_x = math.sin(x[2])
-    cos_x = math.cos(x[2])
+    sin_x = np.sin(x[2])
+    cos_x = np.cos(x[2])
     mL = m * L
     D = 1 / (L * (M + m * (1 - cos_x**2)))
     b = mL * x[3]**2 * sin_x - d * x[1] + u
-    dx = np.zeros(4)
 
     # Non-linear ordinary differential equations describing
     # simple cart-pendulum system dynamics
-    dx[0] = x[1]
-    dx[1] = D * (-mL * g * cos_x * sin_x + L * b)
-    dx[2] = x[3]
-    dx[3] = D * ((m + M) * g * sin_x - cos_x * b)
+    dxdt = np.array([
+        x[1],
+        D * (-mL * g * cos_x * sin_x + L * b),
+        x[3],
+        D * ((m + M) * g * sin_x - cos_x * b)
+    ], dtype=np.float32)
 
-    return dx
+    return dxdt
 
 
 def cartpend_ss(m=1, M=5, L=2, g=-10, d=1, s=1):
-    """Calculates the linearized approximation of the cart-pendulum
-    system dynamics at either the vertical-up position (s=1) or
-    vertical-down position (s=-1).
+    """Calculates the state-space model matrices for the linearized 
+    approximation of the cart-pendulum system at either the 
+    vertical-up position (s=1) or vertical-down position (s=-1).
 
-    Returns two arrays, A, B which are the system and input matrices
-    in the state-space system of differential equations:
+    Returns two arrays, A, the state transition matrix, and B, 
+    the input matrix, of the state-space system:
 
-        x_dot = Ax + Bu
+        dx/dt(t) = A.x(t) + B.u(t)
 
-    where x is the state vector, u is the control vector and x_dot
-    is the time derivative (dx/dt).
+    where x(t) is the state vector, u(t) is a control input  
+    vector and dx/dt(t) is the time derivative of x(t) at time t.
 
     Args:
         m (float): Mass of pendulum.
         M (float): Mass of cart.
         L (float): Length of pendulum.
         g (float): Acceleration due to gravity.
-        d (float): Damping coefficient for friction between cart and
-            ground.
+        d (float): Damping coefficient for friction between cart 
+            and ground.
         s (int): 1 for pendulum up position or -1 for down.
 
     Returns:
-        A, B (np.arrays): The A, B matrices of the state-space model
-            of the linearized system.
+        A, B (np.arrays): The A, B matrices of the state-space
+            model of the linearized system.
     """
 
     A = np.array([
