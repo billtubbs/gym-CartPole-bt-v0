@@ -1,20 +1,14 @@
 import casadi as cas
 import rockit
-from rockit import MultipleShooting
+from rockit import MultipleShooting, FreeTime
 import matplotlib.pyplot as plt
 
 
-# Sample period (seconds)
-dt = 0.05
-
 # Number of control intervals
-N = 100
-
-# Control horizon (seconds)
-T = N * dt
+N = 30
 
 # Define optimal control problem
-ocp = rockit.Ocp(T=T)
+ocp = rockit.Ocp(T=FreeTime(2))
 
 # System states
 x1 = ocp.state()  # horizontal position of the cart (x)
@@ -44,16 +38,23 @@ ocp.set_der(x2, D * (-m * L * g * cos_x3 * sin_x3 + L * b))
 ocp.set_der(x3, x4)
 ocp.set_der(x4, D * ((m + M) * g * sin_x3 - cos_x3 * b))
 
-# Constraints on control action
-ocp.subject_to(-200 <= (u <= 200))
-
 # Initial condition
-ocp.subject_to(ocp.at_t0(x1)==-1.0)
+ocp.subject_to(ocp.at_t0(x1)==-2.0)
 ocp.subject_to(ocp.at_t0(x2)==0.0)
-ocp.subject_to(ocp.at_t0(x3)==0.0)
+ocp.subject_to(ocp.at_t0(x3)==3.14159)
 ocp.subject_to(ocp.at_t0(x4)==0.0)
 
-ocp.add_objective(ocp.integral(x1**2 + 2 * x3**2))
+# Terminal condition
+ocp.subject_to(ocp.at_tf(x1)==0.0)
+ocp.subject_to(ocp.at_tf(x2)==0.0)
+ocp.subject_to(ocp.at_tf(x3)==3.14159)
+ocp.subject_to(ocp.at_tf(x4)==0.0)
+
+# Path constraints
+ocp.subject_to(-200 <= (u <= 200))
+ocp.subject_to(2.356 <= (x3 <= 3.927))
+
+ocp.add_objective(ocp.T)
 
 ocp.solver('ipopt')
 ocp.method(MultipleShooting(N=N, intg='rk'))
