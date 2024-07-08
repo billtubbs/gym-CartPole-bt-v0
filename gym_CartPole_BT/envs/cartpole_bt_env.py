@@ -24,7 +24,6 @@ understand and use to help us learn about the relative
 strengths and weaknesses of control/RL approaches.
 """
 
-import math
 from functools import partial
 import gym
 from gym import spaces, logger
