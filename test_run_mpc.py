@@ -51,8 +51,9 @@ ocp.subject_to(ocp.at_tf(x3)==3.14159)
 ocp.subject_to(ocp.at_tf(x4)==0.0)
 
 # Path constraints
-ocp.subject_to(-200 <= (u <= 200))
-ocp.subject_to(2.356 <= (x3 <= 3.927))
+ocp.subject_to(-4.8 <= (x1 <= 4.8))  # control action space
+ocp.subject_to(2.7236 <= (x3 <= 3.5596))  # stay within 24˚ of vertical
+ocp.subject_to(-200 <= (u <= 200))  # control action space
 
 ocp.add_objective(ocp.T)
 
@@ -85,3 +86,5 @@ for ax, (label, data) in zip(axes, plot_info.items()):
 axes[-1].set_xlabel('Time')
 plt.tight_layout()
 plt.show()
+
+breakpoint()

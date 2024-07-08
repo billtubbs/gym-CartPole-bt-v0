@@ -1,6 +1,6 @@
 cloudpickle==3.0.0
 gym==0.21.0
-numpy==1.26.3
+numpy
 pip==21.0
 pyglet==1.5.27
 scipy==1.12.0
