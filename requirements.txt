@@ -4,5 +4,5 @@ numpy
 pip==21.0
 pyglet==1.5.27
 scipy==1.12.0
-setuptools==65.5.1
+setuptools==70.0.0
 wheel==0.38.0
