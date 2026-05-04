@@ -1,5 +1,9 @@
 # gym-CartPole-bt-v0
 
+***THIS VERSION OF THE MODIFIED CART-POLE ENVIRONMENT HAS BEEN SUPERCEDED BY A NEW ONE AT THE LINK BELOW. THE NEW VERSION IS COMPATIBLE WITH THE NEW GYMNASIUM ENVIRONMENT MAINTAINED BY FARAMA FOUNDATION:***
+
+- https://github.com/billtubbs/gym-CartPole-bt
+
 This is a modified version of the [cart-pole OpenAI Gym environment](https://gym.openai.com/envs/CartPole-v1/) for testing
 different controllers and reinforcement learning algorithms.
 
